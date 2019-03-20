@@ -1,0 +1,506 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "PETBOOK API",
+        "description": "API for pet app...",
+        "contact": {
+            "email": "hungcuongqn86@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "host": "petbook.vn",
+    "basePath": "/api/v1",
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "paths": {
+        "/media/upload": {
+            "post": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Upload file",
+                "description": "Returns file detail",
+                "operationId": "postPetsFile",
+                "parameters": [
+                    {
+                        "name": "files[]",
+                        "in": "formData",
+                        "description": "file to upload",
+                        "required": false,
+                        "type": "file"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/media/delete": {
+            "delete": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Delete file",
+                "description": "Delete file",
+                "operationId": "postPetsFile",
+                "parameters": [
+                    {
+                        "name": "files[]",
+                        "in": "formData",
+                        "description": "file to upload",
+                        "required": false,
+                        "type": "file"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/mpet/pet/search": {
+            "get": {
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "Get list of pets",
+                "description": "Returns list of pets",
+                "operationId": "getPetsList",
+                "parameters": [
+                    {
+                        "name": "pettype",
+                        "in": "query",
+                        "description": "Lo\u1ea1i th\u00fa nu\u00f4i",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "owner",
+                        "in": "query",
+                        "description": "Ch\u1ee7 s\u1edf h\u1eefu",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/mpet/pet/detail/{id}": {
+            "get": {
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "Get pet detail",
+                "description": "Returns detail of pet",
+                "operationId": "getPetDetai",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID th\u00fa nu\u00f4i",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/mpet/pet/create": {
+            "post": {
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "Create Pet",
+                "description": "Returns Pet detail",
+                "operationId": "postCreatePet",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "images is list file id, example '2,5,36,1'",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "owner_id": {
+                                    "type": "integer"
+                                },
+                                "pet_type_id": {
+                                    "type": "integer"
+                                },
+                                "gender": {
+                                    "type": "integer"
+                                },
+                                "birth_day": {
+                                    "type": "string"
+                                },
+                                "dead_day": {
+                                    "type": "string"
+                                },
+                                "age": {
+                                    "type": "integer"
+                                },
+                                "story": {
+                                    "type": "string"
+                                },
+                                "diary": {
+                                    "type": "string"
+                                },
+                                "guest_book": {
+                                    "type": "string"
+                                },
+                                "images": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/mpet/pet/update": {
+            "put": {
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "Update Pet Info",
+                "description": "Returns Pet detail",
+                "operationId": "putUpdatePet",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "images is list file id, example '2,5,36,1'",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "owner_id": {
+                                    "type": "integer"
+                                },
+                                "pet_type_id": {
+                                    "type": "integer"
+                                },
+                                "gender": {
+                                    "type": "integer"
+                                },
+                                "birth_day": {
+                                    "type": "string"
+                                },
+                                "dead_day": {
+                                    "type": "string"
+                                },
+                                "age": {
+                                    "type": "integer"
+                                },
+                                "story": {
+                                    "type": "string"
+                                },
+                                "diary": {
+                                    "type": "string"
+                                },
+                                "guest_book": {
+                                    "type": "string"
+                                },
+                                "images": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/mpet/pet/delete": {
+            "delete": {
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "Delete Pets",
+                "description": "Returns bol successful or error",
+                "operationId": "deletePets",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "list id of Pets",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/mpet/pettype/search": {
+            "get": {
+                "tags": [
+                    "Pettype"
+                ],
+                "summary": "Get list of pettypes",
+                "description": "Returns list of pettypes",
+                "operationId": "getPettypesList",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/mpet/pettype/detail/{id}": {
+            "get": {
+                "tags": [
+                    "Pettype"
+                ],
+                "summary": "Get pettype detail",
+                "description": "Returns detail of pettype",
+                "operationId": "getPettypeDetai",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID lo\u1ea1i th\u00fa nu\u00f4i",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/mpet/pettype/create": {
+            "post": {
+                "tags": [
+                    "Pettype"
+                ],
+                "summary": "Create Pettype",
+                "description": "Returns Pettype detail",
+                "operationId": "postCreatePettype",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Lo\u1ea1i th\u00fa nu\u00f4i",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/mpet/pettype/update": {
+            "put": {
+                "tags": [
+                    "Pettype"
+                ],
+                "summary": "Update Pettype Info",
+                "description": "Returns Pettype detail",
+                "operationId": "putUpdatePettype",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Lo\u1ea1i th\u00fa nu\u00f4i",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/mpet/pettype/delete": {
+            "delete": {
+                "tags": [
+                    "Pettype"
+                ],
+                "summary": "Delete Pettypes",
+                "description": "Returns bol successful or error",
+                "operationId": "deletePettypes",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "list id of Pettypes",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {}
+}
