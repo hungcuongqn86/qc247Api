@@ -14,6 +14,7 @@
         "laravel/tinker": "~1.0",
         "nwidart/laravel-modules": "^2.7",
         "paragonie/random_compat": "2.*",
+        "spatie/laravel-permission": "^2.36",
         "zircote/swagger-php": "2.*"
     },
     "require-dev": {
