@@ -63,6 +63,7 @@ class CartController extends CommonController
             $inputCart['shop_id'] = $shop['id'];
             $user = $request->user();
             $inputCart['user_id'] = $user->id;
+            $inputCart['price_arr'] = json_encode($inputCart['price_arr']);
             $create = CartServiceFactory::mCartService()->create($inputCart);
             return $this->sendResponse($create, 'Successfully.');
         } catch (\Exception $e) {
