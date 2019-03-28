@@ -3,14 +3,16 @@
 namespace Modules\Common\Services;
 
 use Modules\Common\Services\Impl\VersionService;
-use Modules\Common\Services\Impl\PartnerService;
 use Modules\Common\Services\Impl\MediaService;
+use Modules\Common\Services\Impl\UserService;
+use Modules\Common\Services\Impl\RoleService;
 
 class CommonServiceFactory
 {
     protected static $mVersionService;
-    protected static $mPartnerService;
     protected static $mMediaService;
+    protected static $mUserService;
+    protected static $mRoleService;
 
     public static function mVersionService()
     {
@@ -20,12 +22,12 @@ class CommonServiceFactory
         return self::$mVersionService;
     }
 
-    public static function mParnerService()
+    public static function mUserService()
     {
-        if (self::$mPartnerService == null) {
-            self::$mPartnerService = new PartnerService();
+        if (self::$mUserService == null) {
+            self::$mUserService = new UserService();
         }
-        return self::$mPartnerService;
+        return self::$mUserService;
     }
 
     public static function mMediaService()
@@ -34,5 +36,13 @@ class CommonServiceFactory
             self::$mMediaService = new MediaService();
         }
         return self::$mMediaService;
+    }
+
+    public static function mRoleService()
+    {
+        if (self::$mRoleService == null) {
+            self::$mRoleService = new RoleService();
+        }
+        return self::$mRoleService;
     }
 }

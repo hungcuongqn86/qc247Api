@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Common\Services\Intf;
+namespace Modules\Partner\Services\Intf;
 
 interface IPartnerService
 {
