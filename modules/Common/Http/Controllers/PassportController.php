@@ -189,7 +189,7 @@ class PassportController extends Controller
             $newchildren->icon = 'fa fa-folder';
             $children[] = $newchildren;
 
-            if($user->hasPermissionTo('order1')){
+            /*if($user->hasPermissionTo('order1')){
                 $newchildren = new \stdClass();
                 $newchildren->name = 'order1';
                 $newchildren->url = '/order/order1';
@@ -202,7 +202,7 @@ class PassportController extends Controller
                 $newchildren->url = '/order/order2';
                 $newchildren->icon = 'fa fa-folder';
                 $children[] = $newchildren;
-            }
+            }*/
             $newobj->children = $children;
             $nav[] = $newobj;
         }
