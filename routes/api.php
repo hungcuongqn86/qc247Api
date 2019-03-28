@@ -18,17 +18,10 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['namespace' => 'Modules\Common\Http\Controllers'], function () {
         Route::post('login', 'PassportController@login');
         Route::post('register', 'PassportController@register');
+        Route::post('permissions', 'PassportController@setPermissions');
         Route::group(['middleware' => 'auth:api'], function () {
-            Route::post('get-details', 'PassportController@getDetails');
-        });
-    });
-
-    Route::group(['middleware' => 'auth:api'], function () {
-        Route::group(['prefix' => 'media'], function () {
-            Route::group(['namespace' => 'Modules\Common\Http\Controllers'], function () {
-                Route::post('/upload', 'MediaController@upload');
-                Route::delete('/delete', 'MediaController@delete');
-            });
+            Route::get('checklogin', 'PassportController@getDetails');
+            Route::get('getnav', 'PassportController@getPermissions');
         });
     });
 });

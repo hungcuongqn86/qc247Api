@@ -168,6 +168,14 @@ class PassportController extends Controller
             $nav[] = $newobj;
         }
 
+        if($user->hasPermissionTo('mcustumer')){
+            $newobj = new \stdClass();
+            $newobj->name = 'Khách hàng';
+            $newobj->url = '/mcustumer';
+            $newobj->icon = 'fa fa-user-plus';
+            $nav[] = $newobj;
+        }
+
         if($user->hasPermissionTo('order')){
             $newobj = new \stdClass();
             $children = [];
@@ -183,16 +191,16 @@ class PassportController extends Controller
 
             if($user->hasPermissionTo('order1')){
                 $newchildren = new \stdClass();
-                $newchildren->name = 'Loài';
-                $newchildren->url = '/mpet/species';
-                $newchildren->icon = 'cui-graph';
+                $newchildren->name = 'order1';
+                $newchildren->url = '/order/order1';
+                $newchildren->icon = 'fa fa-folder';
                 $children[] = $newchildren;
             }
             if($user->hasPermissionTo('order2')){
                 $newchildren = new \stdClass();
-                $newchildren->name = 'Giống';
-                $newchildren->url = '/mpet/breed';
-                $newchildren->icon = 'fa fa-sitemap';
+                $newchildren->name = 'order2';
+                $newchildren->url = '/order/order2';
+                $newchildren->icon = 'fa fa-folder';
                 $children[] = $newchildren;
             }
             $newobj->children = $children;
@@ -230,14 +238,14 @@ class PassportController extends Controller
             $newobj = new \stdClass();
             $newobj->name = 'Hồ sơ cá nhân';
             $newobj->url = '/profile';
-            $newobj->icon = 'fa fa-users';
+            $newobj->icon = 'fa fa-user';
             $nav[] = $newobj;
         }
         if($user->hasPermissionTo('setting')){
             $newobj = new \stdClass();
             $newobj->name = 'Setting';
             $newobj->url = '/setting';
-            $newobj->icon = 'fa fa-users';
+            $newobj->icon = 'fa fa-gear';
             $nav[] = $newobj;
         }
         return $nav;
@@ -245,6 +253,7 @@ class PassportController extends Controller
 
     public function setPermissions()
     {
+        echo 1;exit;
         // Permissions
         Permission::create(['name' => 'dashboard']);
         Permission::create(['name' => 'mcustumer']);

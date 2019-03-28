@@ -8,7 +8,7 @@ class Partner extends BaseEntity
 {
     use Notifiable;
 
-    protected $table = 'm_partner';
+    protected $table = 'partner';
     protected $primaryKey = 'id';
     public $timestamps = false;
     protected $fillable = [
