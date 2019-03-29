@@ -6,6 +6,7 @@ use Modules\Common\Services\Impl\VersionService;
 use Modules\Common\Services\Impl\MediaService;
 use Modules\Common\Services\Impl\UserService;
 use Modules\Common\Services\Impl\RoleService;
+use Modules\Common\Services\Impl\TransactionService;
 
 class CommonServiceFactory
 {
@@ -13,6 +14,7 @@ class CommonServiceFactory
     protected static $mMediaService;
     protected static $mUserService;
     protected static $mRoleService;
+    protected static $mTransactionService;
 
     public static function mVersionService()
     {
@@ -44,5 +46,13 @@ class CommonServiceFactory
             self::$mRoleService = new RoleService();
         }
         return self::$mRoleService;
+    }
+
+    public static function mTransactionService()
+    {
+        if (self::$mTransactionService == null) {
+            self::$mTransactionService = new TransactionService();
+        }
+        return self::$mTransactionService;
     }
 }
