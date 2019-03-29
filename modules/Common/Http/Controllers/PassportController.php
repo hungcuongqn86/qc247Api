@@ -173,7 +173,7 @@ class PassportController extends Controller
         if($user->hasPermissionTo('mcustumer')){
             $newobj = new \stdClass();
             $newobj->name = 'Khách hàng';
-            $newobj->url = '/mcustumer';
+            $newobj->url = '/mcustumer/custumer';
             $newobj->icon = 'fa fa-user-plus';
             $nav[] = $newobj;
         }
@@ -255,9 +255,9 @@ class PassportController extends Controller
 
     public function setPermissions()
     {
-        echo 1;exit;
+        // echo 1;exit;
         // Permissions
-        Permission::create(['name' => 'dashboard']);
+        /*Permission::create(['name' => 'dashboard']);
         Permission::create(['name' => 'mcustumer']);
         Permission::create(['name' => 'cart']);
         Permission::create(['name' => 'order']);
@@ -266,7 +266,7 @@ class PassportController extends Controller
         Permission::create(['name' => 'mpartner']);
         Permission::create(['name' => 'muser']);
         Permission::create(['name' => 'profile']);
-        Permission::create(['name' => 'setting']);
+        Permission::create(['name' => 'setting']);*/
 
         // Role
         // administrator
@@ -282,7 +282,6 @@ class PassportController extends Controller
         $role->givePermissionTo('mcustumer');
         $role->givePermissionTo('order');
         $role->givePermissionTo('package');
-        $role->givePermissionTo('wallet');
         $role->givePermissionTo('muser');
         $role->givePermissionTo('setting');
 
@@ -294,10 +293,10 @@ class PassportController extends Controller
 
         // owner
         $role = Role::findByName('custumer');
-        $role->givePermissionTo('dashboard');
         $role->givePermissionTo('cart');
         $role->givePermissionTo('order');
         $role->givePermissionTo('package');
+        $role->givePermissionTo('wallet');
         $role->givePermissionTo('profile');
         echo 1;
         exit;
