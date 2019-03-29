@@ -25,7 +25,7 @@ class UserService extends CommonService implements IUserService
      */
     public function search($filter)
     {
-        $query = User::with(['Partner', 'roles'])->where('is_deleted', '=', 0);
+        $query = User::with(['Partner', 'roles'])->where('is_deleted', '=', 0)->where('type', '=', 0);
 
         $iPartner = isset($filter['partner_id']) ? $filter['partner_id'] : 0;
         if ($iPartner > 0) {
