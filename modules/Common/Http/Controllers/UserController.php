@@ -28,6 +28,21 @@ class UserController extends CommonController
         }
     }
 
+
+    public function custumers(Request $request)
+    {
+        $input = $request->all();
+        try {
+            $user = Auth::user();
+            if (!empty($user['partner_id']) && $user['partner_id'] > 0) {
+                $input['partner_id'] = $user['partner_id'];
+            }
+            return $this->sendResponse(CommonServiceFactory::mUserService()->custumer($input), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function detail($id)
     {
         try {

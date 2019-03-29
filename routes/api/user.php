@@ -5,6 +5,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => 'muser', 'namespace' => 'Modules\Common\Http\Controllers'], function () {
             Route::group(['prefix' => 'user'], function () {
                 Route::get('/search', 'UserController@search');
+                Route::get('/custumers', 'UserController@custumers');
                 Route::get('/detail/{id}', 'UserController@detail');
                 Route::post('/create', 'UserController@create');
                 Route::put('/update', 'UserController@update');

@@ -125,6 +125,7 @@ class PassportController extends Controller
 
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
+        $input['type'] = 1;
         $user = User::create($input);
         $user->assignRole('custumer');
         $success['token'] = $user->createToken('MyApp')->accessToken;
