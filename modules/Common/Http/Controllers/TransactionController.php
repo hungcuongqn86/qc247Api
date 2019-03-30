@@ -30,10 +30,10 @@ class TransactionController extends CommonController
                 'value' => 'required'
             ];
             $arrMessages = [
-                'user_id.required' => 'name.required',
-                'type.required' => 'email.required',
-                'code.required' => 'email.required',
-                'value.required' => 'email.required'
+                'user_id.required' => 'user_id.required',
+                'type.required' => 'type.required',
+                'code.required' => 'code.required',
+                'value.required' => 'value.required'
             ];
 
             $validator = Validator::make($input, $arrRules, $arrMessages);
