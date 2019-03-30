@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Modules\Common\Entities\Partner;
+use Modules\Common\Entities\Transaction;
 
 class User extends Authenticatable
 {
@@ -33,5 +34,10 @@ class User extends Authenticatable
     public function Partner()
     {
         return $this->belongsTo(Partner::class, 'partner_id', 'id');
+    }
+
+    public function Transaction()
+    {
+        return $this->hasMany(Transaction::class, 'user_id', 'id');
     }
 }

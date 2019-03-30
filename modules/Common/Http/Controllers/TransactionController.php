@@ -24,23 +24,16 @@ class TransactionController extends CommonController
         $input = $request->all();
         try {
             $arrRules = [
-                'name' => 'required',
-                'email' => 'required|email|unique:users',
-                'password' => 'required',
-                'c_password' => 'required|same:password',
-                'partner_id' => 'required',
-                'phone_number' => 'required'
+                'user_id' => 'required',
+                'type' => 'required',
+                'code' => 'required',
+                'value' => 'required'
             ];
             $arrMessages = [
-                'name.required' => 'name.required',
-                'email.required' => 'email.required',
-                'email.email' => 'email.email',
-                'email.unique' => 'email.unique',
-                'password.required' => 'password.required',
-                'c_password.required' => 'c_password.required',
-                'c_password.same' => 'c_password.same',
-                'partner_id.required' => 'partner_id.required',
-                'phone_number.required' => 'phone_number.required'
+                'user_id.required' => 'name.required',
+                'type.required' => 'email.required',
+                'code.required' => 'email.required',
+                'value.required' => 'email.required'
             ];
 
             $validator = Validator::make($input, $arrRules, $arrMessages);
@@ -49,18 +42,8 @@ class TransactionController extends CommonController
             }
 
             $user = Auth::user();
-            if (!empty($user['partner_id']) && $user['partner_id'] > 0) {
-                $input['partner_id'] = $user['partner_id'];
-            }
-
-            $input['password'] = bcrypt($input['password']);
-            $create = CommonServiceFactory::mUserService()->create($input);
-            if ($create) {
-                $role = CommonServiceFactory::mRoleService()->findById($input['role_id']);
-                if ($role) {
-                    $create->assignRole($role['role']['name']);
-                }
-            }
+            $input['created_by'] = $user['id'];
+            $create = CommonServiceFactory::mTransactionService()->create($input);
             return $this->sendResponse($create, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
@@ -72,20 +55,16 @@ class TransactionController extends CommonController
         $input = $request->all();
         try {
             $arrRules = [
-                'name' => 'required',
-                'email' => 'required|email|unique:users,email,' . $input['id'],
-                'c_password' => 'same:password',
-                'partner_id' => 'required',
-                'phone_number' => 'required'
+                'user_id' => 'required',
+                'type' => 'required',
+                'code' => 'required',
+                'value' => 'required'
             ];
             $arrMessages = [
-                'name.required' => 'name.required',
-                'email.required' => 'email.required',
-                'email.email' => 'email.email',
-                'email.unique' => 'email.unique',
-                'c_password.same' => 'c_password.same',
-                'partner_id.required' => 'partner_id.required',
-                'phone_number.required' => 'phone_number.required'
+                'user_id.required' => 'name.required',
+                'type.required' => 'email.required',
+                'code.required' => 'email.required',
+                'value.required' => 'email.required'
             ];
 
             $validator = Validator::make($input, $arrRules, $arrMessages);
@@ -93,26 +72,7 @@ class TransactionController extends CommonController
                 return $this->sendError('Error', $validator->errors()->all());
             }
 
-            if (!empty($input['password'])) {
-                $input['password'] = bcrypt($input['password']);
-            }
-
-            $user = Auth::user();
-            if (!empty($user['partner_id']) && $user['partner_id'] > 0) {
-                $input['partner_id'] = $user['partner_id'];
-            }
-
-            $update = CommonServiceFactory::mUserService()->update($input);
-            if ($update) {
-                $role = CommonServiceFactory::mRoleService()->findById($input['role_id']);
-                if ($role) {
-                    $roles = $update->getRoleNames();
-                    foreach ($roles as $item) {
-                        $update->removeRole($item);
-                    }
-                    $update->assignRole($role['role']['name']);
-                }
-            }
+            $update = CommonServiceFactory::mTransactionService()->update($input);
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
@@ -122,7 +82,7 @@ class TransactionController extends CommonController
     public function delete(Request $request)
     {
         $input = $request->all();
-        $owners = CommonServiceFactory::mUserService()->findByIds($input);
+        $owners = CommonServiceFactory::mTransactionService()->findByIds($input);
         $deleteData = array();
         $errData = array();
         foreach ($input as $id) {
@@ -135,7 +95,7 @@ class TransactionController extends CommonController
                 }
             }
             if (!$check) {
-                $errData[] = 'User Id ' . $id . ' NotExist';
+                $errData[] = 'Transaction Id ' . $id . ' NotExist';
             }
         }
 
@@ -144,7 +104,7 @@ class TransactionController extends CommonController
         }
 
         try {
-            CommonServiceFactory::mUserService()->delete($input);
+            CommonServiceFactory::mTransactionService()->delete($input);
             return $this->sendResponse(true, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
