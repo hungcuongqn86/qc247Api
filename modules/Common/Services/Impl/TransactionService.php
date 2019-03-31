@@ -45,6 +45,17 @@ class TransactionService extends CommonService implements ITransactionService
         return $otran->_type();
     }
 
+    public function debt($userId)
+    {
+        $query = Transaction::where('is_deleted', '=', 0);
+        $res = $query->Where('user_id', '=', $userId)->orderBy('id', 'desc')->first();
+        if (!empty($res)) {
+            return $res->debt;
+        } else {
+            return 0;
+        }
+    }
+
     public function create($arrInput)
     {
         $transaction = new Transaction($arrInput);

@@ -57,6 +57,15 @@ class TransactionController extends CommonController
 
             $user = Auth::user();
             $input['created_by'] = $user['id'];
+            // Du no
+            $duNo = CommonServiceFactory::mTransactionService()->debt($input['user_id']);
+            $types = CommonServiceFactory::mTransactionService()->types();
+            foreach ($types as $type) {
+                if ($type->id == $input['type']) {
+                    $duNo = $duNo + ($input['value'] * $type->value);
+                }
+            }
+            $input['debt'] = $duNo;
             $create = CommonServiceFactory::mTransactionService()->create($input);
             return $this->sendResponse($create, 'Successfully.');
         } catch (\Exception $e) {

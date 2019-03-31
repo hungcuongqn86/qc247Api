@@ -71,9 +71,7 @@ class UserService extends CommonService implements IUserService
 
     public function findById($id)
     {
-        $rResult = User::with(['Partner', 'roles'])->with(array('Transaction' => function($rResult) {
-            $rResult->orderBy('id', 'DESC');
-        }))->where('id', '=', $id)->first();
+        $rResult = User::with(['Partner', 'roles'])->where('id', '=', $id)->first();
         if (!empty($rResult)) {
             return array('user' => $rResult->toArray());
         } else {
