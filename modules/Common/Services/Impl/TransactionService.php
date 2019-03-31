@@ -15,7 +15,7 @@ class TransactionService extends CommonService implements ITransactionService
 
     protected function getDefaultClass()
     {
-         return Transaction::class;
+        return Transaction::class;
     }
 
     /**
@@ -37,6 +37,12 @@ class TransactionService extends CommonService implements ITransactionService
         $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
         $rResult = $query->paginate($limit)->toArray();
         return $rResult;
+    }
+
+    public function types()
+    {
+        $otran = new Transaction();
+        return $otran->_type();
     }
 
     public function create($arrInput)

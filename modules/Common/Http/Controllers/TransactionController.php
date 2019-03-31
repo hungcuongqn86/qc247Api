@@ -27,37 +27,10 @@ class TransactionController extends CommonController
     public function types()
     {
         try {
-            return $this->sendResponse(self::_type(), 'Successfully.');
+            return $this->sendResponse(CommonServiceFactory::mTransactionService()->types(), 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }
-    }
-
-    private function _type(){
-        $types = [];
-
-        // Nạp tiền
-        $newobj = new \stdClass();
-        $newobj->id = 1;
-        $newobj->name = 'Nạp tiền';
-        $newobj->value = 1;
-        $types[] = $newobj;
-
-        // Rút tiền
-        $newobj = new \stdClass();
-        $newobj->id = 2;
-        $newobj->name = 'Rút tiền';
-        $newobj->value = -1;
-        $types[] = $newobj;
-
-        // Rút tiền
-        $newobj = new \stdClass();
-        $newobj->id = 3;
-        $newobj->name = 'Thanh toán';
-        $newobj->value = -1;
-        $types[] = $newobj;
-
-        return $types;
     }
 
     public function create(Request $request)
