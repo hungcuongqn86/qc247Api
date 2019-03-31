@@ -17,6 +17,7 @@ class Transaction extends BaseEntity
         'type',
         'code',
         'value',
+        'debt',
         'content',
         'is_deleted',
         'created_by',

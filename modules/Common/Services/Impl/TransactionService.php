@@ -24,7 +24,19 @@ class TransactionService extends CommonService implements ITransactionService
      */
     public function search($filter)
     {
-        return [];
+        $query = Transaction::where('is_deleted', '=', 0);
+
+        $iUser = isset($filter['user_id']) ? $filter['user_id'] : 0;
+        $query->Where('user_id', '=', $iUser);
+
+        $iType = isset($filter['type']) ? $filter['type'] : '';
+        if (!empty($iType)) {
+            $query->Where('type', '=', $iType);
+        }
+        $query->orderBy('id', 'desc');
+        $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
+        $rResult = $query->paginate($limit)->toArray();
+        return $rResult;
     }
 
     public function create($arrInput)

@@ -16,7 +16,40 @@ class TransactionController extends CommonController
 
     public function search(Request $request)
     {
-        return $this->sendResponse([], 'Successfully.');
+        $input = $request->all();
+        try {
+            return $this->sendResponse(CommonServiceFactory::mTransactionService()->search($input), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function types()
+    {
+        try {
+            return $this->sendResponse(self::_type(), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    private function _type(){
+        $types = [];
+        $newobj = new \stdClass();
+
+        // Nạp tiền
+        $newobj->id = 1;
+        $newobj->name = 'Nạp tiền';
+        $newobj->value = 1;
+        $types[] = $newobj;
+
+        // Rút tiền
+        $newobj->id = 2;
+        $newobj->name = 'Rút tiền';
+        $newobj->value = -1;
+        $types[] = $newobj;
+
+        return $types;
     }
 
     public function create(Request $request)

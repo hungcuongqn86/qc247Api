@@ -15,6 +15,8 @@ Route::group(['middleware' => 'auth:api'], function () {
                 Route::get('/search', 'RoleController@search');
             });
             Route::group(['prefix' => 'transaction'], function () {
+                Route::get('/search', 'TransactionController@search');
+                Route::get('/types', 'TransactionController@types');
                 Route::post('/create', 'TransactionController@create');
             });
         });
