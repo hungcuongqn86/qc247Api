@@ -4,35 +4,16 @@ namespace Modules\Common\Entities;
 
 use Illuminate\Notifications\Notifiable;
 
-class Cart extends BaseEntity
+class Order extends BaseEntity
 {
     use Notifiable;
 
-    protected $table = 'cart';
+    protected $table = 'orders';
     protected $primaryKey = 'id';
     public $timestamps = false;
     protected $fillable = [
         'user_id',
         'shop_id',
-        'order_id',
-        'amount',
-        'begin_amount',
-        'color',
-        'colortxt',
-        'count',
-        'domain',
-        'image',
-        'method',
-        'name',
-        'note',
-        'price',
-        'price_arr',
-        'pro_link',
-        'pro_properties',
-        'rate',
-        'site',
-        'size',
-        'sizetxt',
         'status',
         'is_deleted',
         'created_at',
@@ -42,5 +23,10 @@ class Cart extends BaseEntity
     public function Shop()
     {
         return $this->belongsTo(Shop::class, 'shop_id', 'id');
+    }
+
+    public function Cart()
+    {
+        return $this->hasMany(Cart::class, 'order_id', 'id');
     }
 }

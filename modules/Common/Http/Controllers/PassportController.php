@@ -209,13 +209,13 @@ class PassportController extends Controller
             $newobj->children = $children;
             $nav[] = $newobj;
         }
-        if($user->hasPermissionTo('package')){
+        /*if($user->hasPermissionTo('package')){
             $newobj = new \stdClass();
             $newobj->name = 'Kiện hàng';
             $newobj->url = '/package';
             $newobj->icon = 'fa fa-cubes';
             $nav[] = $newobj;
-        }
+        }*/
         if($user->hasPermissionTo('wallet')){
             $newobj = new \stdClass();
             $newobj->name = 'Ví điện tử';
@@ -237,13 +237,13 @@ class PassportController extends Controller
             $newobj->icon = 'fa fa-users';
             $nav[] = $newobj;
         }
-        if($user->hasPermissionTo('profile')){
+        /*if($user->hasPermissionTo('profile')){
             $newobj = new \stdClass();
             $newobj->name = 'Hồ sơ cá nhân';
             $newobj->url = '/profile';
             $newobj->icon = 'fa fa-user';
             $nav[] = $newobj;
-        }
+        }*/
         if($user->hasPermissionTo('setting')){
             $newobj = new \stdClass();
             $newobj->name = 'Setting';
