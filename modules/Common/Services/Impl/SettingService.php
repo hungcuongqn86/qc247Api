@@ -41,7 +41,7 @@ class SettingService extends CommonService implements ISettingService
     public function findById($id)
     {
         $rResult = Setting::where('id', '=', $id)->first();
-        return array('sim' => $rResult);
+        return array('setting' => $rResult);
     }
 
     public function create($arrInput)
