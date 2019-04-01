@@ -31,3 +31,4 @@ require __DIR__ . '/api/shop.php';
 require __DIR__ . '/api/cart.php';
 require __DIR__ . '/api/partner.php';
 require __DIR__ . '/api/user.php';
+require __DIR__ . '/api/setting.php';

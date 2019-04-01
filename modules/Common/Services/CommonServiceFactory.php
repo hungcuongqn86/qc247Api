@@ -3,6 +3,7 @@
 namespace Modules\Common\Services;
 
 use Modules\Common\Services\Impl\VersionService;
+use Modules\Common\Services\Impl\SettingService;
 use Modules\Common\Services\Impl\MediaService;
 use Modules\Common\Services\Impl\UserService;
 use Modules\Common\Services\Impl\RoleService;
@@ -11,6 +12,7 @@ use Modules\Common\Services\Impl\TransactionService;
 class CommonServiceFactory
 {
     protected static $mVersionService;
+    protected static $mSettingService;
     protected static $mMediaService;
     protected static $mUserService;
     protected static $mRoleService;
@@ -22,6 +24,14 @@ class CommonServiceFactory
             self::$mVersionService = new VersionService();
         }
         return self::$mVersionService;
+    }
+
+    public static function mSettingService()
+    {
+        if (self::$mSettingService == null) {
+            self::$mSettingService = new SettingService();
+        }
+        return self::$mSettingService;
     }
 
     public static function mUserService()
