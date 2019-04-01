@@ -15,6 +15,12 @@ class Order extends BaseEntity
         'user_id',
         'shop_id',
         'status',
+        'rate',
+        'count_product',
+        'count_link',
+        'tien_hang',
+        'phi_tam_tinh',
+        'tong',
         'is_deleted',
         'created_at',
         'updated_at'

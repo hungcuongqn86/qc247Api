@@ -24,16 +24,16 @@ class OrderController extends CommonController
     {
         $input = $request->all();
         $arrRules = [
-            'user_id' => 'required',
             'shop_id' => 'required',
             'cart_ids' => 'required'
         ];
         $arrMessages = [
-            'user_id.required' => 'user_id.required',
             'shop_id.required' => 'shop_id.required',
             'cart_ids.required' => 'cart_ids.required'
         ];
 
+        $user = $request->user();
+        $input['user_id'] = $user['id'];
         $validator = Validator::make($input, $arrRules, $arrMessages);
         if ($validator->fails()) {
             return $this->sendError('Error', $validator->errors()->all());
