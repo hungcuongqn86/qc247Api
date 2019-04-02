@@ -115,4 +115,37 @@ class CartController extends CommonController
         $json = preg_replace('/(,)\s*}$/', '}', $json);
         return json_decode($json, $assoc);
     }
+
+    public function delete(Request $request)
+    {
+        $input = $request->all();
+        $arrId = explode(',', $input['ids']);
+        $carts = CartServiceFactory::mCartService()->findByIds($arrId);
+        $deleteData = array();
+        $errData = array();
+        foreach ($arrId as $id) {
+            $check = false;
+            foreach ($carts as $cart) {
+                if ($id == $cart['id']) {
+                    $check = true;
+                    $cart['is_deleted'] = 1;
+                    $deleteData[] = $cart;
+                }
+            }
+            if (!$check) {
+                $errData[] = 'Cart Id ' . $id . ' NotExist';
+            }
+        }
+
+        if (!empty($errData)) {
+            return $this->sendError('Error', $errData);
+        }
+
+        try {
+            CartServiceFactory::mCartService()->delete($arrId);
+            return $this->sendResponse(true, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
 }

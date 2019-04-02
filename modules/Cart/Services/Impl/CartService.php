@@ -73,4 +73,26 @@ class CartService extends CommonService implements ICartService
             throw $e;
         }
     }
+
+    public function findByIds($ids)
+    {
+        $rResult = Cart::wherein('id', $ids)->get()->toArray();
+        return $rResult;
+    }
+
+    public function delete($ids)
+    {
+        DB::beginTransaction();
+        try {
+            Cart::wherein('id', $ids)->update(['is_deleted' => 1]);
+            DB::commit();
+            return true;
+        } catch (QueryException $e) {
+            DB::rollBack();
+            throw $e;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }
