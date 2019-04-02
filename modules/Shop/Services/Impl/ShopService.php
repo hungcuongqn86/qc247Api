@@ -28,9 +28,11 @@ class ShopService extends CommonService implements IShopService
         return [1];
     }
 
-    public function getByIds($ids)
+    public function getByIds($ids, $userid)
     {
-        $query = Shop::with(['Cart'])->wherein('id', $ids);
+        $query = Shop::with(array('Cart' => function ($query) use ($userid) {
+            $query->where('user_id', '=', $userid)->where('is_deleted', '=', 0)->orderBy('id');
+        }))->wherein('id', $ids);
         $rResult = $query->get()->toArray();
         return $rResult;
     }

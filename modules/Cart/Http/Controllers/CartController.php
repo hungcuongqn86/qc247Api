@@ -16,8 +16,45 @@ class CartController extends CommonController
         try {
             // Lay theo shop
             $shopids = CartServiceFactory::mCartService()->getDistinctShopCart($user->id);
-            $shops = ShopServiceFactory::mShopService()->getByIds($shopids);
+            $shops = ShopServiceFactory::mShopService()->getByIds($shopids, $user->id);
             return $this->sendResponse($shops, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function update(Request $request)
+    {
+        $input = $request->all();
+        try {
+            $arrRules = [
+                'amount' => 'required',
+                'domain' => 'required',
+                'image' => 'required',
+                'method' => 'required',
+                'name' => 'required',
+                'pro_link' => 'required',
+                'rate' => 'required',
+                'site' => 'required'
+            ];
+            $arrMessages = [
+                'amount.required' => 'amount.required',
+                'domain.required' => 'domain.required',
+                'image.required' => 'image.required',
+                'method.required' => 'method.required',
+                'name.required' => 'name.required',
+                'pro_link.required' => 'pro_link.required',
+                'rate.required' => 'rate.required',
+                'site.required' => 'site.required'
+            ];
+
+            $validator = Validator::make($input, $arrRules, $arrMessages);
+            if ($validator->fails()) {
+                return $this->sendError('Error', $validator->errors()->all());
+            }
+
+            $update = CartServiceFactory::mCartService()->update($input);
+            return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }
