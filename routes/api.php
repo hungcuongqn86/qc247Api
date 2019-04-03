@@ -18,6 +18,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['namespace' => 'Modules\Common\Http\Controllers'], function () {
         Route::post('login', 'PassportController@login');
         Route::post('register', 'PassportController@register');
+        Route::get('auth/signup/activate/{token}', 'PassportController@signupActivate');
         Route::post('permissions', 'PassportController@setPermissions');
         Route::group(['middleware' => 'auth:api'], function () {
             Route::get('checklogin', 'PassportController@getDetails');

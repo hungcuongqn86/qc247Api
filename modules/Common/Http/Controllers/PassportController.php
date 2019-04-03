@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use App\Notifications\SignupActivate;
 
 class PassportController extends Controller
 {
@@ -54,7 +55,7 @@ class PassportController extends Controller
             'remember_me' => 'boolean'
         ]);
         $credentials = request(['email', 'password']);
-        // $credentials['active'] = 1;
+        $credentials['active'] = 1;
         // $credentials['deleted_at'] = null;
         if (!Auth::attempt($credentials))
             return response()->json([
@@ -125,13 +126,30 @@ class PassportController extends Controller
 
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
+        $input['activation_token'] = str_random(60);
         $input['type'] = 1;
         $user = User::create($input);
         $user->assignRole('custumer');
-        $success['token'] = $user->createToken('MyApp')->accessToken;
-        $success['name'] = $user->name;
+        $user->notify(new SignupActivate($user));
+        //$success['token'] = $user->createToken('MyApp')->accessToken;
+        //$success['name'] = $user->name;
 
-        return response()->json($success, $this->sucessStatus);
+        return response()->json([1], $this->sucessStatus);
+    }
+
+    public function signupActivate($token)
+    {
+        $user = User::where('activation_token', $token)->first();
+        if (!$user) {
+            echo 'Kích hoạt tài khoản thất bại!';
+            exit();
+        }
+        $user->active = true;
+        $user->activation_token = '';
+        $user->save();
+        echo 'Kích hoạt tài khoản thành công!';
+        header("Location: http://quangchauonline.com:88");
+        exit();
     }
 
     /*
@@ -155,7 +173,7 @@ class PassportController extends Controller
     {
         $nav = [];
         $user = Auth::user();
-        if($user->hasPermissionTo('dashboard')){
+        if ($user->hasPermissionTo('dashboard')) {
             $newobj = new \stdClass();
             $newobj->name = 'Bảng tổng hợp';
             $newobj->url = '/dashboard';
@@ -163,7 +181,7 @@ class PassportController extends Controller
             $nav[] = $newobj;
         }
 
-        if($user->hasPermissionTo('cart')){
+        if ($user->hasPermissionTo('cart')) {
             $newobj = new \stdClass();
             $newobj->name = 'Giỏ hàng';
             $newobj->url = '/cart';
@@ -171,7 +189,7 @@ class PassportController extends Controller
             $nav[] = $newobj;
         }
 
-        if($user->hasPermissionTo('mcustumer')){
+        if ($user->hasPermissionTo('mcustumer')) {
             $newobj = new \stdClass();
             $newobj->name = 'Khách hàng';
             $newobj->url = '/mcustumer/custumer';
@@ -179,7 +197,7 @@ class PassportController extends Controller
             $nav[] = $newobj;
         }
 
-        if($user->hasPermissionTo('order')){
+        if ($user->hasPermissionTo('order')) {
             $newobj = new \stdClass();
             $children = [];
             $newobj->name = 'Đơn hàng';
@@ -216,21 +234,21 @@ class PassportController extends Controller
             $newobj->icon = 'fa fa-cubes';
             $nav[] = $newobj;
         }*/
-        if($user->hasPermissionTo('wallet')){
+        if ($user->hasPermissionTo('wallet')) {
             $newobj = new \stdClass();
             $newobj->name = 'Ví điện tử';
             $newobj->url = '/wallet';
             $newobj->icon = 'fa fa-money';
             $nav[] = $newobj;
         }
-        if($user->hasPermissionTo('mpartner')){
+        if ($user->hasPermissionTo('mpartner')) {
             $newobj = new \stdClass();
             $newobj->name = 'Đối tác';
             $newobj->url = '/mpartner/partner';
             $newobj->icon = 'icon-puzzle';
             $nav[] = $newobj;
         }
-        if($user->hasPermissionTo('muser')){
+        if ($user->hasPermissionTo('muser')) {
             $newobj = new \stdClass();
             $newobj->name = 'Người dùng';
             $newobj->url = '/muser/user';
@@ -244,7 +262,7 @@ class PassportController extends Controller
             $newobj->icon = 'fa fa-user';
             $nav[] = $newobj;
         }*/
-        if($user->hasPermissionTo('setting')){
+        if ($user->hasPermissionTo('setting')) {
             $newobj = new \stdClass();
             $newobj->name = 'Setting';
             $newobj->url = '/setting';

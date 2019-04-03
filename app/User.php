@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'partner_id', 'phone_number', 'type', 'cost_percent'
+        'name', 'email', 'password', 'partner_id', 'phone_number', 'type', 'cost_percent', 'active', 'activation_token'
     ];
 
     /**
@@ -28,7 +28,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'activation_token'
     ];
 
     public function Partner()
