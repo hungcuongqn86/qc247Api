@@ -206,7 +206,7 @@ class PassportController extends Controller
 
             $newchildren = new \stdClass();
             $newchildren->name = 'Tất cả';
-            $newchildren->url = '/order/all';
+            $newchildren->url = '/order/list';
             $newchildren->icon = 'fa fa-folder';
             $children[] = $newchildren;
 

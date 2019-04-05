@@ -17,7 +17,12 @@ class OrderController extends CommonController
 
     public function search(Request $request)
     {
-        return $this->sendResponse([], 'Successfully.');
+        $input = $request->all();
+        try {
+            return $this->sendResponse(OrderServiceFactory::mOrderService()->search($input), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
     }
 
     public function create(Request $request)

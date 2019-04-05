@@ -4,5 +4,5 @@ namespace Modules\Order\Services\Intf;
 
 interface IOrderService
 {
-    public function search($userId);
+    public function search($filter);
 }

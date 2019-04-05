@@ -19,9 +19,17 @@ class OrderService extends CommonService implements IOrderService
         return Order::class;
     }
 
-    public function search($userId)
+    public function search($filter)
     {
-        return [];
+        $query = Order::with(['User', 'Cart', 'Shop'])->where('is_deleted', '=', 0);
+        $sKeySearch = isset($filter['key']) ? $filter['key'] : '';
+        if (!empty($sKeySearch)) {
+
+        }
+        $query->orderBy('id', 'desc');
+        $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
+        $rResult = $query->paginate($limit)->toArray();
+        return $rResult;
     }
 
     public function create($arrInput)

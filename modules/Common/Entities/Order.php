@@ -2,6 +2,7 @@
 
 namespace Modules\Common\Entities;
 
+use App\User;
 use Illuminate\Notifications\Notifiable;
 
 class Order extends BaseEntity
@@ -29,6 +30,11 @@ class Order extends BaseEntity
     public function Shop()
     {
         return $this->belongsTo(Shop::class, 'shop_id', 'id');
+    }
+
+    public function User()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function Cart()
