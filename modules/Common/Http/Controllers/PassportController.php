@@ -201,7 +201,11 @@ class PassportController extends Controller
             $newobj = new \stdClass();
             //$children = [];
             $newobj->name = 'Đơn hàng';
-            $newobj->url = '/order/list';
+            if ($user->hasPermissionTo('wallet')) {
+                $newobj->url = '/order/myorder';
+            }else{
+                $newobj->url = '/order/list';
+            }
             $newobj->icon = 'fa fa-gavel';
 
             /*$newchildren = new \stdClass();
