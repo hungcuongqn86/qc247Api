@@ -32,6 +32,12 @@ class OrderService extends CommonService implements IOrderService
         return $rResult;
     }
 
+    public function status()
+    {
+        $order = new Order();
+        return $order->status();
+    }
+
     public function create($arrInput)
     {
         $order = new Order($arrInput);
