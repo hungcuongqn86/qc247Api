@@ -25,6 +25,18 @@ class OrderController extends CommonController
         }
     }
 
+    public function myOrder(Request $request)
+    {
+        $input = $request->all();
+        try {
+            $user = $request->user();
+            $input['user_id'] = $user->id;
+            return $this->sendResponse(OrderServiceFactory::mOrderService()->search($input), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function detail($id)
     {
         try {
