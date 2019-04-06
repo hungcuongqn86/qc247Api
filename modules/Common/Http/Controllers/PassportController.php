@@ -199,16 +199,16 @@ class PassportController extends Controller
 
         if ($user->hasPermissionTo('order')) {
             $newobj = new \stdClass();
-            $children = [];
+            //$children = [];
             $newobj->name = 'Đơn hàng';
-            $newobj->url = '/order';
+            $newobj->url = '/order/list';
             $newobj->icon = 'fa fa-gavel';
 
-            $newchildren = new \stdClass();
+            /*$newchildren = new \stdClass();
             $newchildren->name = 'Tất cả';
             $newchildren->url = '/order/list';
             $newchildren->icon = 'fa fa-folder';
-            $children[] = $newchildren;
+            $children[] = $newchildren;*/
 
             /*if($user->hasPermissionTo('order1')){
                 $newchildren = new \stdClass();
@@ -224,7 +224,7 @@ class PassportController extends Controller
                 $newchildren->icon = 'fa fa-folder';
                 $children[] = $newchildren;
             }*/
-            $newobj->children = $children;
+            // $newobj->children = $children;
             $nav[] = $newobj;
         }
         /*if($user->hasPermissionTo('package')){

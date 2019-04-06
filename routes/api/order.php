@@ -5,6 +5,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/search', 'OrderController@search');
             Route::get('/status', 'OrderController@status');
             Route::post('/create', 'OrderController@create');
+            Route::get('/detail/{id}', 'OrderController@detail');
         });
     });
 });

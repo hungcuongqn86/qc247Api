@@ -25,6 +25,15 @@ class OrderController extends CommonController
         }
     }
 
+    public function detail($id)
+    {
+        try {
+            return $this->sendResponse(OrderServiceFactory::mOrderService()->findById($id), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function status(){
         try {
             return $this->sendResponse(OrderServiceFactory::mOrderService()->status(), 'Successfully.');
