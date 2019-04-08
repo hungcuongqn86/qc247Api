@@ -40,7 +40,7 @@ class SignupActivate extends Notification
      */
     public function toMail($notifiable)
     {
-        $url = url('/api/auth/signup/activate/'.$notifiable->activation_token);
+        $url = url('/api/v1/auth/signup/activate/'.$notifiable->activation_token);
         return (new MailMessage)
                     ->subject('Xác nhận tài khoản QC247')
                     ->line('Cảm ơn bạn đã đăng ký sử dụng dịch vụ của chúng tôi! Bạn hãy nhấn vào nút "Xác nhận" để kích hoạt tài khoản này!')

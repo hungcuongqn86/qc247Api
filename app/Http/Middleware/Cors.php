@@ -7,7 +7,7 @@ use Closure;
 class Cors
 {
     private static $allowedOriginsWhitelist = [
-        'chrome-extension://iimfhjipkjigmllimkhgijpbcjddccid', 'https://item.taobao.com/item.htm'
+        'chrome-extension://hedjogelnmjoilmlomnekfbchmbfngja'
     ];
 
     // All the headers must be a string

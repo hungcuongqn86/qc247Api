@@ -148,7 +148,7 @@ class PassportController extends Controller
         $user->activation_token = '';
         $user->save();
         echo 'Kích hoạt tài khoản thành công!';
-        header("Location: http://quangchauonline.com:88");
+        header("Location: http://api.quangchau247online.com/public/admin");
         exit();
     }
 
