@@ -23,7 +23,9 @@ class Shop extends BaseEntity
 
     public function getRateAttribute()
     {
-        return 3520;
+        $setting = new Setting();
+        $rowRate = $setting->where('key','=','rate')->first();
+        return (int)$rowRate->value;
     }
 
     public function Cart()

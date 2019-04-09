@@ -44,21 +44,10 @@ class SettingService extends CommonService implements ISettingService
         return array('setting' => $rResult);
     }
 
-    public function create($arrInput)
+    public function findByKey($key)
     {
-        $version = new Setting($arrInput);
-        DB::beginTransaction();
-        try {
-            $version->save();
-            DB::commit();
-            return $version;
-        } catch (QueryException $e) {
-            DB::rollBack();
-            throw $e;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        $rResult = Setting::where('key', '=', $key)->first();
+        return array('setting' => $rResult);
     }
 
     public function update($arrInput)

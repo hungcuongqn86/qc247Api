@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Notifications\SignupActivate;
+use Modules\Common\Services\CommonServiceFactory;
 
 class PassportController extends Controller
 {
@@ -128,6 +129,9 @@ class PassportController extends Controller
         $input['password'] = bcrypt($input['password']);
         $input['activation_token'] = str_random(60);
         $input['type'] = 1;
+        // Lay ti le chiet khau
+        $costPercent = CommonServiceFactory::mSettingService()->findByKey('cost_percent');
+        $input['cost_percent'] = $costPercent['setting']->value;
         $user = User::create($input);
         $user->assignRole('custumer');
         $user->notify(new SignupActivate($user));
