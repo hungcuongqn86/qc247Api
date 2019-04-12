@@ -42,14 +42,19 @@ class Order extends BaseEntity
         return $this->hasMany(Cart::class, 'order_id', 'id');
     }
 
+    public function History()
+    {
+        return $this->hasMany(History::class, 'order_id', 'id');
+    }
+
     public function status(){
         $res = [];
         $res[] = ['id'=>1, 'name'=>'Chờ báo giá'];
         $res[] = ['id'=>2, 'name'=>'Chờ đặt cọc'];
-        $res[] = ['id'=>2, 'name'=>'Đang mua hàng'];
-        $res[] = ['id'=>2, 'name'=>'Đã mua hàng'];
-        $res[] = ['id'=>2, 'name'=>'Thanh lý'];
-        $res[] = ['id'=>2, 'name'=>'Hủy'];
+        $res[] = ['id'=>3, 'name'=>'Đang mua hàng'];
+        $res[] = ['id'=>4, 'name'=>'Đã mua hàng'];
+        $res[] = ['id'=>5, 'name'=>'Thanh lý'];
+        $res[] = ['id'=>6, 'name'=>'Hủy'];
         return $res;
     }
 }

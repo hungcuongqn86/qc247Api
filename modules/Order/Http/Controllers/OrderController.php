@@ -85,6 +85,13 @@ class OrderController extends CommonController
                     );
                     CartServiceFactory::mCartService()->update($cartInput);
                 }
+                // History
+                $history = [
+                    'user_id' => $user['id'],
+                    'order_id' => $create['id'],
+                    'type'  => 1
+                ];
+                OrderServiceFactory::mHistoryService()->create($history);
             }
             return $this->sendResponse($create, 'Successfully.');
         } catch (\Exception $e) {
