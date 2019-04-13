@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Cart\Services\CartServiceFactory;
+use Modules\Common\Services\CommonServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
 
 class OrderController extends CommonController
@@ -140,6 +141,61 @@ class OrderController extends CommonController
                     'content' => $input['content']
                 ];
                 OrderServiceFactory::mHistoryService()->create($history);
+            }
+            return $this->sendResponse($update, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function datcoc(Request $request)
+    {
+        $input = $request->all();
+        $arrRules = [
+            'id' => 'required',
+            'dc_value' => 'required'
+        ];
+        $arrMessages = [
+            'id.required' => 'id.required',
+            'dc_value.required' => 'dc_value.required'
+        ];
+
+        $validator = Validator::make($input, $arrRules, $arrMessages);
+        if ($validator->fails()) {
+            return $this->sendError('Error', $validator->errors()->all());
+        }
+
+        try {
+            $user = $request->user();
+            // Transaction
+            $debt = CommonServiceFactory::mTransactionService()->debt(['user_id' => $user['id']]);
+            if ($debt < $input['dc_value']) {
+                return $this->sendError('dc_value.debt');
+            }
+
+            $input['status'] = 3;
+            $input['baogia_content'] = $input['content'];
+            $input['datcoc_content'] = $input['content'];
+            $update = OrderServiceFactory::mOrderService()->update($input);
+            if (!empty($update)) {
+                // History
+                $history = [
+                    'user_id' => $user['id'],
+                    'order_id' => $input['id'],
+                    'type' => 3,
+                    'content' => $input['content']
+                ];
+                $historyRs = OrderServiceFactory::mHistoryService()->create($history);
+
+                // Transaction
+                $transaction = [
+                    'user_id' => $user['id'],
+                    'type' => 4,
+                    'code' => $input['id'] . '.H' . $historyRs['id'],
+                    'value' => $input['dc_value'],
+                    'debt' => $debt - $input['dc_value']
+                ];
+                CommonServiceFactory::mTransactionService()->create($transaction);
             }
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
