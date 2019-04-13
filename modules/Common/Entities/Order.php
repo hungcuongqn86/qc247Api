@@ -23,6 +23,9 @@ class Order extends BaseEntity
         'phi_tam_tinh',
         'tong',
         'baogia_content',
+        'datcoc_content',
+        'thanh_toan',
+        'con_thieu',
         'is_deleted',
         'created_at',
         'updated_at'

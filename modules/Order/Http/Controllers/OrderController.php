@@ -174,8 +174,8 @@ class OrderController extends CommonController
             }
 
             $input['status'] = 3;
-            $input['baogia_content'] = $input['content'];
             $input['datcoc_content'] = $input['content'];
+            $input['thanh_toan'] = $input['dc_value'];
             $update = OrderServiceFactory::mOrderService()->update($input);
             if (!empty($update)) {
                 // History
