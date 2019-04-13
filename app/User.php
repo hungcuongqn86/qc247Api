@@ -31,6 +31,19 @@ class User extends Authenticatable
         'password', 'remember_token', 'activation_token'
     ];
 
+    protected $appends = ['debt'];
+
+    public function getDebtAttribute()
+    {
+        $query = $this->Transaction()->where('is_deleted', '=', 0);
+        $res = $query->orderBy('id', 'desc')->first();
+        if (!empty($res)) {
+            return $res->debt;
+        } else {
+            return 0;
+        }
+    }
+
     public function Partner()
     {
         return $this->belongsTo(Partner::class, 'partner_id', 'id');
