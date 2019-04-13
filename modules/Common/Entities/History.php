@@ -22,6 +22,13 @@ class History extends BaseEntity
         'updated_at'
     ];
 
+    protected $appends = ['user_name'];
+
+    public function getUserNameAttribute()
+    {
+        return $this->User()->first()->name;
+    }
+
     public function Order()
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
