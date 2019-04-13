@@ -3,6 +3,7 @@
 namespace Modules\Common\Entities;
 
 use Illuminate\Notifications\Notifiable;
+use App\User;
 
 class History extends BaseEntity
 {
@@ -26,14 +27,20 @@ class History extends BaseEntity
         return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
-    public function types(){
+    public function User()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function types()
+    {
         $res = [];
-        $res[] = ['id'=>1, 'name'=>'Kết đơn'];
-        $res[] = ['id'=>2, 'name'=>'Báo giá'];
-        $res[] = ['id'=>3, 'name'=>'Đặt cọc'];
-        $res[] = ['id'=>4, 'name'=>'Mua hàng'];
-        $res[] = ['id'=>5, 'name'=>'Thanh lý'];
-        $res[] = ['id'=>6, 'name'=>'Hủy'];
+        $res[] = ['id' => 1, 'name' => 'Kết đơn'];
+        $res[] = ['id' => 2, 'name' => 'Báo giá'];
+        $res[] = ['id' => 3, 'name' => 'Đặt cọc'];
+        $res[] = ['id' => 4, 'name' => 'Mua hàng'];
+        $res[] = ['id' => 5, 'name' => 'Thanh lý'];
+        $res[] = ['id' => 6, 'name' => 'Hủy'];
         return $res;
     }
 }

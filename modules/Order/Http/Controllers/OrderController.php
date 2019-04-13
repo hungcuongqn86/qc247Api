@@ -46,9 +46,19 @@ class OrderController extends CommonController
         }
     }
 
-    public function status(){
+    public function status()
+    {
         try {
             return $this->sendResponse(OrderServiceFactory::mOrderService()->status(), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function historyTypes()
+    {
+        try {
+            return $this->sendResponse(OrderServiceFactory::mHistoryService()->types(), 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }
@@ -89,11 +99,49 @@ class OrderController extends CommonController
                 $history = [
                     'user_id' => $user['id'],
                     'order_id' => $create['id'],
-                    'type'  => 1
+                    'type' => 1
                 ];
                 OrderServiceFactory::mHistoryService()->create($history);
             }
             return $this->sendResponse($create, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function baogia(Request $request)
+    {
+        $input = $request->all();
+        $arrRules = [
+            'id' => 'required',
+            'content' => 'required'
+        ];
+        $arrMessages = [
+            'id.required' => 'id.required',
+            'content.required' => 'content.required'
+        ];
+
+        $validator = Validator::make($input, $arrRules, $arrMessages);
+        if ($validator->fails()) {
+            return $this->sendError('Error', $validator->errors()->all());
+        }
+
+        try {
+            $input['status'] = 2;
+            $input['baogia_content'] = $input['content'];
+            $update = OrderServiceFactory::mOrderService()->update($input);
+            if (!empty($update)) {
+                // History
+                $user = $request->user();
+                $history = [
+                    'user_id' => $user['id'],
+                    'order_id' => $input['id'],
+                    'type' => 2,
+                    'content' => $input['content']
+                ];
+                OrderServiceFactory::mHistoryService()->create($history);
+            }
+            return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }
