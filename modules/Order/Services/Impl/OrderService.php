@@ -30,6 +30,10 @@ class OrderService extends CommonService implements IOrderService
         if ($iuser > 0) {
             $query->where('user_id', '=', $iuser);
         }
+        $istatus = isset($filter['status']) ? $filter['status'] : 0;
+        if ($istatus > 0) {
+            $query->where('status', '=', $istatus);
+        }
         $query->orderBy('id', 'desc');
         $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
         $rResult = $query->paginate($limit)->toArray();
