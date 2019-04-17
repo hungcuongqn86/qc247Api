@@ -24,7 +24,12 @@ class OrderService extends CommonService implements IOrderService
         $query = Order::with(['User', 'Cart', 'Shop'])->where('is_deleted', '=', 0);
         $sKeySearch = isset($filter['key']) ? $filter['key'] : '';
         if (!empty($sKeySearch)) {
-
+            $query->where('id', 'LIKE', '%' . $sKeySearch . '%');
+            $query->orWhereHas('User', function ($q) use ($sKeySearch) {
+                $q->where('name', 'LIKE', '%' . $sKeySearch . '%');
+                $q->orWhere('email', 'LIKE', '%' . $sKeySearch . '%');
+                $q->orWhere('phone_number', 'LIKE', '%' . $sKeySearch . '%');
+            });
         }
         $iuser = isset($filter['user_id']) ? $filter['user_id'] : 0;
         if ($iuser > 0) {
