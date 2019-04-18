@@ -195,9 +195,24 @@ class PassportController extends Controller
 
         if ($user->hasPermissionTo('mcustumer')) {
             $newobj = new \stdClass();
-            $newobj->name = 'Khách hàng';
-            $newobj->url = '/mcustumer/custumer';
-            $newobj->icon = 'fa fa-user-plus';
+            $newobj->name = 'Tài chính Việt Nam';
+            $newobj->url = '/mcustumer';
+            $newobj->icon = 'fa fa-money';
+            $children = [];
+
+            $newchildren = new \stdClass();
+            $newchildren->name = 'TK khách';
+            $newchildren->url = '/mcustumer/custumer';
+            $newchildren->icon = 'fa fa-user-plus';
+            $children[] = $newchildren;
+
+            $newchildren = new \stdClass();
+            $newchildren->name = 'Chi nội bộ';
+            $newchildren->url = '/mcustumer/internal';
+            $newchildren->icon = 'fa fa-recycle';
+            $children[] = $newchildren;
+
+            $newobj->children = $children;
             $nav[] = $newobj;
         }
 
