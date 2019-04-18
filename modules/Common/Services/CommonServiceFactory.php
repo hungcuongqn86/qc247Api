@@ -8,6 +8,7 @@ use Modules\Common\Services\Impl\MediaService;
 use Modules\Common\Services\Impl\UserService;
 use Modules\Common\Services\Impl\RoleService;
 use Modules\Common\Services\Impl\TransactionService;
+use Modules\Common\Services\Impl\BankAccountService;
 
 class CommonServiceFactory
 {
@@ -15,6 +16,7 @@ class CommonServiceFactory
     protected static $mSettingService;
     protected static $mMediaService;
     protected static $mUserService;
+    protected static $mBankAccountService;
     protected static $mRoleService;
     protected static $mTransactionService;
 
@@ -40,6 +42,14 @@ class CommonServiceFactory
             self::$mUserService = new UserService();
         }
         return self::$mUserService;
+    }
+
+    public static function mBankAccountService()
+    {
+        if (self::$mBankAccountService == null) {
+            self::$mBankAccountService = new BankAccountService();
+        }
+        return self::$mBankAccountService;
     }
 
     public static function mMediaService()

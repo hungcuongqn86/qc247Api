@@ -33,4 +33,5 @@ require __DIR__ . '/api/cart.php';
 require __DIR__ . '/api/order.php';
 require __DIR__ . '/api/partner.php';
 require __DIR__ . '/api/user.php';
+require __DIR__ . '/api/bank_account.php';
 require __DIR__ . '/api/setting.php';
