@@ -24,10 +24,17 @@ class TransactionService extends CommonService implements ITransactionService
      */
     public function search($filter)
     {
-        $query = Transaction::where('is_deleted', '=', 0);
+        $query = Transaction::with(['User'])->where('is_deleted', '=', 0);
 
         $iUser = isset($filter['user_id']) ? $filter['user_id'] : 0;
-        $query->Where('user_id', '=', $iUser);
+        if ($iUser > 0) {
+            $query->Where('user_id', '=', $iUser);
+        }
+
+        $iAccount = isset($filter['account_id']) ? $filter['account_id'] : 0;
+        if ($iAccount > 0) {
+            $query->Where('bank_account', '=', $iAccount);
+        }
 
         $iType = isset($filter['type']) ? $filter['type'] : '';
         if (!empty($iType)) {
@@ -51,6 +58,17 @@ class TransactionService extends CommonService implements ITransactionService
         $res = $query->Where('user_id', '=', $userId)->orderBy('id', 'desc')->first();
         if (!empty($res)) {
             return $res->debt;
+        } else {
+            return 0;
+        }
+    }
+
+    public function bankdebt($bankAccount)
+    {
+        $query = Transaction::where('is_deleted', '=', 0);
+        $res = $query->Where('bank_account', '=', $bankAccount)->orderBy('id', 'desc')->first();
+        if (!empty($res)) {
+            return $res->bank_debt;
         } else {
             return 0;
         }

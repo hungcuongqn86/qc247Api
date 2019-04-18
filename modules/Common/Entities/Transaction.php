@@ -18,6 +18,8 @@ class Transaction extends BaseEntity
         'code',
         'value',
         'debt',
+        'bank_account',
+        'bank_debt',
         'content',
         'is_deleted',
         'created_by',
@@ -44,6 +46,11 @@ class Transaction extends BaseEntity
     public function User()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function BankAccount()
+    {
+        return $this->belongsTo(BankAccount::class, 'bank_account', 'id');
     }
 
     public function _type()

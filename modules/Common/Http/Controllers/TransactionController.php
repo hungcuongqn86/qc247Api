@@ -38,15 +38,15 @@ class TransactionController extends CommonController
         $input = $request->all();
         try {
             $arrRules = [
-                'user_id' => 'required',
                 'type' => 'required',
                 'code' => 'required',
-                'value' => 'required'
+                'value' => 'required',
+                'bank_account' => 'required'
             ];
             $arrMessages = [
-                'user_id.required' => 'user_id.required',
                 'type.required' => 'type.required',
                 'code.required' => 'code.required',
+                'bank_account.required' => 'bank_account.required',
                 'value.required' => 'value.required'
             ];
 
@@ -58,14 +58,22 @@ class TransactionController extends CommonController
             $user = Auth::user();
             $input['created_by'] = $user['id'];
             // Du no
-            $duNo = CommonServiceFactory::mTransactionService()->debt($input['user_id']);
+            $duNo = 0;
+            if (!empty($input['user_id'])) {
+                $duNo = CommonServiceFactory::mTransactionService()->debt($input['user_id']);
+            }
+
+            $duNoBank = CommonServiceFactory::mTransactionService()->bankdebt($input['bank_account']);
+
             $types = CommonServiceFactory::mTransactionService()->types();
             foreach ($types as $type) {
                 if ($type->id == $input['type']) {
                     $duNo = $duNo + ($input['value'] * $type->value);
+                    $duNoBank = $duNoBank + ($input['value'] * $type->value);
                 }
             }
             $input['debt'] = $duNo;
+            $input['bank_debt'] = $duNoBank;
             $create = CommonServiceFactory::mTransactionService()->create($input);
             return $this->sendResponse($create, 'Successfully.');
         } catch (\Exception $e) {
