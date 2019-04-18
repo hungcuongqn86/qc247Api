@@ -19,4 +19,22 @@ class BankAccount extends BaseEntity
         'created_at',
         'updated_at'
     ];
+
+    protected $appends = ['bank_debt'];
+
+    public function getBankDebtAttribute()
+    {
+        $query = $this->Transaction()->where('is_deleted', '=', 0);
+        $res = $query->orderBy('id', 'desc')->first();
+        if (!empty($res)) {
+            return $res->bank_debt;
+        } else {
+            return 0;
+        }
+    }
+
+    public function Transaction()
+    {
+        return $this->hasMany(Transaction::class, 'bank_account', 'id');
+    }
 }
