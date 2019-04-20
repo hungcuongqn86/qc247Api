@@ -3,17 +3,15 @@
 namespace Modules\Common\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use App\Notifications\SignupActivate;
 use Modules\Common\Services\CommonServiceFactory;
 
-class PassportController extends Controller
+class PassportController extends CommonController
 {
     public $sucessStatus = 200;
 
@@ -113,16 +111,26 @@ class PassportController extends Controller
 
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $arrRules = [
             'name' => 'required',
             'phone_number' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required',
             'c_password' => 'required|same:password',
-        ]);
+        ];
+        $arrMessages = [
+            'name.required' => 'Chưa nhập tên!',
+            'phone_number.required' => 'Chưa nhập số điện thoại!',
+            'email.required' => 'Chưa nhập email!',
+            'email.email' => 'Email không đúng!',
+            'email.unique' => 'Email đã được sử dụng!',
+            'password.required' => 'Chưa nhập passwword!',
+            'password.c_password' => 'Chưa nhập passwword xác nhận!',
+        ];
 
+        $validator = Validator::make($request->all(), $arrRules, $arrMessages);
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return $this->sendError('Error', $validator->errors()->all());
         }
 
         $input = $request->all();
@@ -135,10 +143,9 @@ class PassportController extends Controller
         $user = User::create($input);
         $user->assignRole('custumer');
         $user->notify(new SignupActivate($user));
-        //$success['token'] = $user->createToken('MyApp')->accessToken;
-        //$success['name'] = $user->name;
-
-        return response()->json([1], $this->sucessStatus);
+        $success['token'] = $user->createToken('MyApp')->accessToken;
+        $success['name'] = $user->name;
+        return $this->sendResponse($success, 'Successfully.');
     }
 
     public function signupActivate($token)
@@ -222,7 +229,7 @@ class PassportController extends Controller
             $newobj->name = 'Đơn hàng';
             if ($user->hasPermissionTo('wallet')) {
                 $newobj->url = '/order/myorder';
-            }else{
+            } else {
                 $newobj->url = '/order/list';
             }
             $newobj->icon = 'fa fa-gavel';
