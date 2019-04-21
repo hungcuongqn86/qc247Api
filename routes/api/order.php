@@ -10,6 +10,10 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::post('/datcoc', 'OrderController@datcoc');
             Route::get('/detail/{id}', 'OrderController@detail');
             Route::get('/history/types', 'OrderController@historyTypes');
+            Route::group(['prefix' => 'package'], function () {
+                Route::post('/create', 'PackageController@create');
+                Route::post('/update', 'PackageController@update');
+            });
         });
     });
 });
