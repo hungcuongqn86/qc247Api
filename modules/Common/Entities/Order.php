@@ -46,6 +46,11 @@ class Order extends BaseEntity
         return $this->hasMany(Cart::class, 'order_id', 'id');
     }
 
+    public function Package()
+    {
+        return $this->hasMany(Package::class, 'order_id', 'id');
+    }
+
     public function History()
     {
         return $this->hasMany(History::class, 'order_id', 'id');

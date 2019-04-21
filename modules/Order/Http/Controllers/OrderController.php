@@ -103,6 +103,11 @@ class OrderController extends CommonController
                     'type' => 1
                 ];
                 OrderServiceFactory::mHistoryService()->create($history);
+                //Package
+                $package = [
+                    'order_id' => $create['id']
+                ];
+                OrderServiceFactory::mPackageService()->create($package);
             }
             return $this->sendResponse($create, 'Successfully.');
         } catch (\Exception $e) {
