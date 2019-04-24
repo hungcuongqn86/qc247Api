@@ -15,6 +15,8 @@ class Package extends BaseEntity
         'order_id',
         'package_code',
         'contract_code',
+        'ship_khach',
+        'ship_tt',
         'status',
         'is_deleted',
         'created_at',
