@@ -25,6 +25,14 @@ Route::group(['prefix' => 'v1'], function () {
             Route::get('getnav', 'PassportController@getPermissions');
         });
     });
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::group(['prefix' => 'media'], function () {
+            Route::group(['namespace' => 'Modules\Common\Http\Controllers'], function () {
+                Route::post('/upload', 'MediaController@upload');
+                Route::delete('/delete', 'MediaController@delete');
+            });
+        });
+    });
 });
 
 // API Routes Pet

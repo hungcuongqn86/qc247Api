@@ -2,7 +2,7 @@
 
 namespace Modules\Common\Services\Impl;
 
-use Modules\Common\Entities\PetMedia;
+use Modules\Common\Entities\Media;
 use Modules\Common\Services\Intf\IMediaService;
 use Illuminate\Support\Facades\DB;
 
@@ -10,12 +10,12 @@ class MediaService extends CommonService implements IMediaService
 {
     protected function getDefaultModel()
     {
-        return PetMedia::getTableName();
+        return Media::getTableName();
     }
 
     protected function getDefaultClass()
     {
-        return PetMedia::class;
+        return Media::class;
     }
 
     /**
@@ -37,9 +37,31 @@ class MediaService extends CommonService implements IMediaService
 
     }
 
+    public function findByIds($ids)
+    {
+        $rResult = Media::wherein('id', $ids)->get()->toArray();
+        return $rResult;
+    }
+
+    public function delete($ids)
+    {
+        DB::beginTransaction();
+        try {
+            Media::wherein('id', $ids)->update(['is_deleted' => 1]);
+            DB::commit();
+            return true;
+        } catch (QueryException $e) {
+            DB::rollBack();
+            throw $e;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
     public function create($arrInput)
     {
-        $petMedia = new PetMedia($arrInput);
+        $petMedia = new Media($arrInput);
         DB::beginTransaction();
         try {
             $petMedia->save();
@@ -59,7 +81,7 @@ class MediaService extends CommonService implements IMediaService
         $id = $arrInput['id'];
         DB::beginTransaction();
         try {
-            $petMedia = PetMedia::find($id);
+            $petMedia = Media::find($id);
             $petMedia->update($arrInput);
             DB::commit();
             return $petMedia;

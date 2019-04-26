@@ -17,10 +17,12 @@ class MediaController extends CommonController
     /**
      * @SWG\POST(
      *      path="/media/upload",
-     *      operationId="postPetsFile",
+     *      operationId="postUploadPetsFile",
      *      tags={"Media"},
      *      summary="Upload file",
      *      description="Returns file detail",
+     *      security={ { "Bearer": {} } },
+     *      @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="", description="Authorization" ),
      *      @SWG\Parameter(
      *         description="file to upload",
      *         in="formData",
@@ -32,10 +34,7 @@ class MediaController extends CommonController
      *          response=200,
      *          description="successful operation"
      *       ),
-     *       @SWG\Response(response=400, description="Bad request"),
-     *       security={
-     *           {"api_key_security_example": {}}
-     *       }
+     *       @SWG\Response(response=400, description="Bad request")
      *     )
      *
      * Returns list of pets
@@ -76,7 +75,7 @@ class MediaController extends CommonController
     private function _upload($file)
     {
         try {
-            $fileName = time() . '.' . $file->getClientOriginalName();
+            $fileName = time() . '.' . $this->seo_friendly_url($file->getClientOriginalName());
             $dir = 'upload' . DIRECTORY_SEPARATOR . date('Y') . DIRECTORY_SEPARATOR . date('m') . DIRECTORY_SEPARATOR . date('d');
             \Storage::disk('public')->putFileAs($dir, $file, $fileName);
             $url = config('app.url') . '/storage/' . urlencode(str_replace(DIRECTORY_SEPARATOR, '/', $dir . DIRECTORY_SEPARATOR . $fileName));
@@ -94,34 +93,66 @@ class MediaController extends CommonController
         }
     }
 
+    private function seo_friendly_url($string){
+        $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+        $string = preg_replace('/[^A-Za-z0-9\-_.]/', '', $string); // Removes special chars.
+        return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
+    }
+
     /**
      * @SWG\DELETE(
      *      path="/media/delete",
-     *      operationId="postPetsFile",
+     *      operationId="postDeletePetsFile",
      *      tags={"Media"},
-     *      summary="Delete file",
-     *      description="Delete file",
+     *      summary="Delete files",
+     *      description="Delete files",
+     *      security={ { "Bearer": {} } },
+     *      @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="", description="Authorization" ),
      *      @SWG\Parameter(
-     *         description="file to upload",
+     *         description="files",
      *         in="formData",
      *         name="files[]",
      *         required=false,
      *         type="file"
-     *     ),
+     *      ),
      *      @SWG\Response(
      *          response=200,
      *          description="successful operation"
-     *       ),
-     *       @SWG\Response(response=400, description="Bad request"),
-     *       security={
-     *           {"api_key_security_example": {}}
-     *       }
+     *      ),
+     *      @SWG\Response(response=400, description="Bad request")
      *     )
      *
-     * Delete file
+     * Delete files
      */
     public function delete(Request $request)
     {
+        $input = $request->all();
+        $imgs = CommonServiceFactory::mMediaService()->findByIds($input);
+        $deleteData = array();
+        $errData = array();
+        foreach ($input as $id) {
+            $check = false;
+            foreach ($imgs as $img) {
+                if ($id == $img['id']) {
+                    $check = true;
+                    $pet['is_deleted'] = 1;
+                    $deleteData[] = $pet;
+                }
+            }
+            if (!$check) {
+                $errData[] = 'Img Id ' . $id . ' NotExist';
+            }
+        }
 
+        if (!empty($errData)) {
+            return $this->sendError('Error', $errData);
+        }
+
+        try {
+            CommonServiceFactory::mMediaService()->delete($input);
+            return $this->sendResponse(true, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
     }
 }
