@@ -2,69 +2,35 @@
 
 namespace Modules\Common\Entities;
 
-use App\User;
 use Illuminate\Notifications\Notifiable;
 
-class Order extends BaseEntity
+class Complain extends BaseEntity
 {
     use Notifiable;
 
-    protected $table = 'orders';
+    protected $table = 'complain';
     protected $primaryKey = 'id';
     public $timestamps = false;
     protected $fillable = [
+        'order_id',
+        'type',
+        'money_request',
+        'content',
         'user_id',
-        'shop_id',
         'status',
-        'rate',
-        'count_product',
-        'count_link',
-        'tien_hang',
-        'phi_tam_tinh',
-        'tong',
-        'baogia_content',
-        'datcoc_content',
-        'thanh_toan',
-        'con_thieu',
         'is_deleted',
         'created_at',
         'updated_at'
     ];
 
-    public function Shop()
-    {
-        return $this->belongsTo(Shop::class, 'shop_id', 'id');
-    }
-
-    public function User()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function Cart()
-    {
-        return $this->hasMany(Cart::class, 'order_id', 'id');
-    }
-
-    public function Package()
-    {
-        return $this->hasMany(Package::class, 'order_id', 'id');
-    }
-
-    public function History()
-    {
-        return $this->hasMany(History::class, 'order_id', 'id');
-    }
-
-    public function status()
+    public function types()
     {
         $res = [];
-        $res[] = ['id' => 1, 'name' => 'Chờ báo giá'];
-        $res[] = ['id' => 2, 'name' => 'Chờ đặt cọc'];
-        $res[] = ['id' => 3, 'name' => 'Đang mua hàng'];
-        $res[] = ['id' => 4, 'name' => 'Đã mua hàng'];
-        $res[] = ['id' => 5, 'name' => 'Thanh lý'];
-        $res[] = ['id' => 6, 'name' => 'Hủy'];
+        $res[] = ['id' => 1, 'name' => 'Khiếu nại chiết khấu cân nặng'];
+        $res[] = ['id' => 2, 'name' => 'Khiếu nại hàng bị vỡ, ướt, bẩn'];
+        $res[] = ['id' => 3, 'name' => 'Khiếu nại chất lượng dịch vụ'];
+        $res[] = ['id' => 4, 'name' => 'Khiếu nại hàng thiếu, nhầm size'];
+        $res[] = ['id' => 5, 'name' => 'Khiếu nại hàng về chậm'];
         return $res;
     }
 }
