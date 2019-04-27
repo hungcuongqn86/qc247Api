@@ -95,4 +95,31 @@ class ComplainController extends CommonController
             return $this->sendError('Error', $e->getMessage());
         }
     }
+
+    public function update(Request $request)
+    {
+        $input = $request->all();
+        $arrRules = [
+            'type' => 'required',
+            'money_request' => 'required',
+            'content' => 'required'
+        ];
+        $arrMessages = [
+            'type.required' => 'type.required',
+            'money_request.required' => 'money_request.required',
+            'content.required' => 'content.required'
+        ];
+
+        $validator = Validator::make($input, $arrRules, $arrMessages);
+        if ($validator->fails()) {
+            return $this->sendError('Error', $validator->errors()->all());
+        }
+
+        try {
+            $update = OrderServiceFactory::mComplainService()->update($input);
+            return $this->sendResponse($update, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
 }
