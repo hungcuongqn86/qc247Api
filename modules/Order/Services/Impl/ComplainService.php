@@ -21,13 +21,10 @@ class ComplainService extends CommonService implements IComplainService
 
     public function search($filter)
     {
-        $query = Complain::with(['ComplainProducts'])->where('is_deleted', '=', 0);
-        $iorder = isset($filter['order_id']) ? $filter['order_id'] : 0;
-        if ($iorder > 0) {
-            $query->where('order_id', '=', $iorder);
-        }
+        $query = Complain::with(['Order'])->where('is_deleted', '=', 0);
         $query->orderBy('id', 'desc');
-        $rResult = $query->get()->toArray();
+        $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
+        $rResult = $query->paginate($limit)->toArray();
         return $rResult;
     }
 

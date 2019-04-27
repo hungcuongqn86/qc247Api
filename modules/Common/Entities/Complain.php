@@ -54,4 +54,9 @@ class Complain extends BaseEntity
     {
         return $this->hasMany(ComplainProducts::class, 'complain_id', 'id');
     }
+
+    public function Order()
+    {
+        return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
 }
