@@ -15,7 +15,7 @@ Route::group(['middleware' => 'auth:api'], function () {
                 Route::post('/update', 'PackageController@update');
             });
             Route::group(['prefix' => 'complain'], function () {
-                Route::get('/search', 'ComplainController@search');
+                Route::get('/search', 'ComplainController@getByOrder');
                 Route::get('/detail/{id}', 'ComplainController@detail');
                 Route::get('/types', 'ComplainController@types');
                 Route::post('/create', 'ComplainController@create');

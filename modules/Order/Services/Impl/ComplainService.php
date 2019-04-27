@@ -31,6 +31,18 @@ class ComplainService extends CommonService implements IComplainService
         return $rResult;
     }
 
+    public function getByOrder($filter)
+    {
+        $query = Complain::with(['ComplainProducts'])->where('is_deleted', '=', 0);
+        $iorder = isset($filter['order_id']) ? $filter['order_id'] : 0;
+        if ($iorder > 0) {
+            $query->where('order_id', '=', $iorder);
+        }
+        $query->orderBy('id', 'desc');
+        $rResult = $query->get()->toArray();
+        return $rResult;
+    }
+
     public function findById($id)
     {
         $rResult = Complain::with(array('ComplainProducts' => function ($query) {

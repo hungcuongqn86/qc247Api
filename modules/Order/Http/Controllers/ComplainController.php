@@ -25,6 +25,16 @@ class ComplainController extends CommonController
         }
     }
 
+    public function getByOrder(Request $request)
+    {
+        $input = $request->all();
+        try {
+            return $this->sendResponse(OrderServiceFactory::mComplainService()->getByOrder($input), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function detail($id)
     {
         try {
