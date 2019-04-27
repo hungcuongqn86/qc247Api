@@ -21,7 +21,9 @@ class ComplainService extends CommonService implements IComplainService
 
     public function search($filter)
     {
-        $query = Complain::with(['Order'])->where('is_deleted', '=', 0);
+        $query = Complain::with(array('Order' => function ($query) {
+            $query->with(['User'])->orderBy('id');
+        }))->where('is_deleted', '=', 0);
         $query->orderBy('id', 'desc');
         $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
         $rResult = $query->paginate($limit)->toArray();
