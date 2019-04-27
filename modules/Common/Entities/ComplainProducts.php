@@ -18,4 +18,14 @@ class ComplainProducts extends BaseEntity
         'created_at',
         'updated_at'
     ];
+
+    public function Cart()
+    {
+        return $this->belongsTo(Cart::class, 'cart_id', 'id');
+    }
+
+    public function Media()
+    {
+        return $this->hasMany(Media::class, 'item_id', 'id');
+    }
 }
