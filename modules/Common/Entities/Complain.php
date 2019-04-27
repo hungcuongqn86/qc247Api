@@ -23,6 +23,22 @@ class Complain extends BaseEntity
         'updated_at'
     ];
 
+    protected $appends = ['otype'];
+
+    public function getOtypeAttribute()
+    {
+        $oType = [];
+        if (!empty($this->attributes['type'])) {
+            $types = self::types();
+            foreach ($types as $type) {
+                if ($type['id'] === $this->attributes['type']) {
+                    $oType = $type;
+                }
+            }
+        }
+        return $oType;
+    }
+
     public function types()
     {
         $res = [];
