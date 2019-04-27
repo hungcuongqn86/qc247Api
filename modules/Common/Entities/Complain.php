@@ -33,4 +33,9 @@ class Complain extends BaseEntity
         $res[] = ['id' => 5, 'name' => 'Khiếu nại hàng về chậm'];
         return $res;
     }
+
+    public function ComplainProducts()
+    {
+        return $this->hasMany(ComplainProducts::class, 'complain_id', 'id');
+    }
 }
