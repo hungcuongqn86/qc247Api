@@ -6,6 +6,7 @@ use Modules\Order\Services\Impl\OrderService;
 use Modules\Order\Services\Impl\HistoryService;
 use Modules\Order\Services\Impl\PackageService;
 use Modules\Order\Services\Impl\ComplainService;
+use Modules\Order\Services\Impl\ComplainProductService;
 
 class OrderServiceFactory
 {
@@ -13,6 +14,7 @@ class OrderServiceFactory
     protected static $mHistoryService;
     protected static $mPackageService;
     protected static $mComplainService;
+    protected static $mComplainProductService;
 
     public static function mOrderService()
     {
@@ -44,5 +46,13 @@ class OrderServiceFactory
             self::$mComplainService = new ComplainService();
         }
         return self::$mComplainService;
+    }
+
+    public static function mComplainProductService()
+    {
+        if (self::$mComplainProductService == null) {
+            self::$mComplainProductService = new ComplainProductService();
+        }
+        return self::$mComplainProductService;
     }
 }
