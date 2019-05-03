@@ -78,7 +78,7 @@ class MediaController extends CommonController
             $fileName = time() . '.' . $this->seo_friendly_url($file->getClientOriginalName());
             $dir = 'upload' . DIRECTORY_SEPARATOR . date('Y') . DIRECTORY_SEPARATOR . date('m') . DIRECTORY_SEPARATOR . date('d');
             \Storage::disk('public')->putFileAs($dir, $file, $fileName);
-            $url = config('app.url') . '/storage/' . urlencode(str_replace(DIRECTORY_SEPARATOR, '/', $dir . DIRECTORY_SEPARATOR . $fileName));
+            $url = config('app.url') . '/storage/app/public/' . urlencode(str_replace(DIRECTORY_SEPARATOR, '/', $dir . DIRECTORY_SEPARATOR . $fileName));
             $input = array(
                 'dir' => str_replace(DIRECTORY_SEPARATOR, '/', $dir),
                 'name' => $fileName,
