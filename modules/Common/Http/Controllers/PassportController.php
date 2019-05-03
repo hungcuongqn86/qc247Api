@@ -256,7 +256,8 @@ class PassportController extends CommonController
             }*/
             // $newobj->children = $children;
             $nav[] = $newobj;
-
+        }
+        if ($user->hasPermissionTo('mcustumer')) {
             // Khieu nai
             $newobj = new \stdClass();
             $newobj->name = 'Khiếu nại';

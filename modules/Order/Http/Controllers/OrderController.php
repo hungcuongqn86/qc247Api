@@ -198,7 +198,8 @@ class OrderController extends CommonController
                     'type' => 4,
                     'code' => $input['id'] . '.H' . $historyRs['id'],
                     'value' => $input['dc_value'],
-                    'debt' => $debt - $input['dc_value']
+                    'debt' => $debt - $input['dc_value'],
+                    'content' => $input['content']
                 ];
                 CommonServiceFactory::mTransactionService()->create($transaction);
             }
