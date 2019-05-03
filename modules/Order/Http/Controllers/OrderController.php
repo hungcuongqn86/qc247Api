@@ -175,7 +175,7 @@ class OrderController extends CommonController
             // Transaction
             $debt = CommonServiceFactory::mTransactionService()->debt(['user_id' => $user['id']]);
             if ($debt < $input['dc_value']) {
-                return $this->sendError('dc_value.debt');
+                return $this->sendError('Dư nợ không đủ để thực hiện đặt cọc!');
             }
 
             $input['status'] = 3;
