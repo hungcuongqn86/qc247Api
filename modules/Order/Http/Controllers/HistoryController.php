@@ -5,6 +5,7 @@ namespace Modules\Order\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
+use Modules\Common\Services\CommonServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
 
 class HistoryController extends CommonController
@@ -84,6 +85,31 @@ class HistoryController extends CommonController
                 }
                 if ($input['type'] == 6) {
                     $orderInput['status'] = 6;
+                }
+                if ($input['type'] == 7) {
+                    $tiencoc = $order['order']['thanh_toan'];
+                    $userId = $order['order']['user_id'];
+                    $debt = CommonServiceFactory::mTransactionService()->debt(['user_id' => $userId]);
+                    if (!empty($tiencoc) && $tiencoc > 0) {
+                        // Hoan tien
+                        $orderInput['datcoc_content'] = $input['content'];
+                        $orderInput['thanh_toan'] = 0;
+                        $orderInput['count_product'] = 0;
+                        $orderInput['tien_hang'] = 0;
+                        $orderInput['phi_tam_tinh'] = 0;
+                        $orderInput['tong'] = 0;
+
+                        // Transaction
+                        $transaction = [
+                            'user_id' => $userId,
+                            'type' => 5,
+                            'code' => $order['order']['id'] . '.H' . $create['id'],
+                            'value' => $tiencoc,
+                            'debt' => $debt + $tiencoc,
+                            'content' => $input['content']
+                        ];
+                        CommonServiceFactory::mTransactionService()->create($transaction);
+                    }
                 }
                 OrderServiceFactory::mOrderService()->update($orderInput);
             }
