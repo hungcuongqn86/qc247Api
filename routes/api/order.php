@@ -9,7 +9,10 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::post('/baogia', 'OrderController@baogia');
             Route::post('/datcoc', 'OrderController@datcoc');
             Route::get('/detail/{id}', 'OrderController@detail');
-            Route::get('/history/types', 'OrderController@historyTypes');
+            Route::group(['prefix' => 'history'], function () {
+                Route::get('/types', 'HistoryController@types');
+                Route::post('/create', 'HistoryController@create');
+            });
             Route::group(['prefix' => 'package'], function () {
                 Route::post('/create', 'PackageController@create');
                 Route::post('/update', 'PackageController@update');

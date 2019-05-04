@@ -28,7 +28,7 @@ class HistoryService extends CommonService implements IHistoryService
     {
         $rResult = History::where('id', '=', $id)->first();
         if (!empty($rResult)) {
-            return array('order' => $rResult->toArray());
+            return array('history' => $rResult->toArray());
         } else {
             return null;
         }
