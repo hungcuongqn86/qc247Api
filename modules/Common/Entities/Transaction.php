@@ -92,6 +92,13 @@ class Transaction extends BaseEntity
         $newobj->value = 1;
         $types[] = $newobj;
 
+        // Thanh lý
+        $newobj = new \stdClass();
+        $newobj->id = 6;
+        $newobj->name = 'Thanh lý';
+        $newobj->value = -1;
+        $types[] = $newobj;
+
         return $types;
     }
 }
