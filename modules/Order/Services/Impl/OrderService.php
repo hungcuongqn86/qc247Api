@@ -21,7 +21,9 @@ class OrderService extends CommonService implements IOrderService
 
     public function search($filter)
     {
-        $query = Order::with(['User', 'Cart', 'Shop'])->where('is_deleted', '=', 0);
+        $query = Order::with(['User', 'Cart', 'Shop'])->with(array('Package' => function ($query) {
+            $query->where('is_deleted', '=', 0)->orderBy('id');
+        }))->where('is_deleted', '=', 0);
         $sKeySearch = isset($filter['key']) ? $filter['key'] : '';
         if (!empty($sKeySearch)) {
             $query->where('id', 'LIKE', '%' . $sKeySearch . '%');
