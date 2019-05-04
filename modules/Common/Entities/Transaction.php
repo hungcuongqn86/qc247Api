@@ -85,6 +85,13 @@ class Transaction extends BaseEntity
         $newobj->value = -1;
         $types[] = $newobj;
 
+        // Đặt cọc
+        $newobj = new \stdClass();
+        $newobj->id = 5;
+        $newobj->name = 'Hoàn cọc';
+        $newobj->value = 1;
+        $types[] = $newobj;
+
         return $types;
     }
 }
