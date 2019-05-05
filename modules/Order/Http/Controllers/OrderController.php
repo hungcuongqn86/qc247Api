@@ -85,6 +85,7 @@ class OrderController extends CommonController
         }
 
         try {
+            $input['status'] = 2;
             $create = OrderServiceFactory::mOrderService()->create($input);
             if (!empty($create)) {
                 $arrCartId = explode(',', $input['cart_ids']);
