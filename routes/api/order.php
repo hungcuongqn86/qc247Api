@@ -14,6 +14,7 @@ Route::group(['middleware' => 'auth:api'], function () {
                 Route::post('/create', 'HistoryController@create');
             });
             Route::group(['prefix' => 'package'], function () {
+                Route::get('/status', 'PackageController@status');
                 Route::post('/create', 'PackageController@create');
                 Route::post('/update', 'PackageController@update');
             });

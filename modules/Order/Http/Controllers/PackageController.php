@@ -33,6 +33,15 @@ class PackageController extends CommonController
         }
     }
 
+    public function status()
+    {
+        try {
+            return $this->sendResponse(OrderServiceFactory::mPackageService()->status(), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function create(Request $request)
     {
         $input = $request->all();

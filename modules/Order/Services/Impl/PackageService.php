@@ -34,6 +34,12 @@ class PackageService extends CommonService implements IPackageService
         }
     }
 
+    public function status()
+    {
+        $package = new Package();
+        return $package->status();
+    }
+
     public function create($arrInput)
     {
         $package = new Package($arrInput);
