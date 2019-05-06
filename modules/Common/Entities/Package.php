@@ -27,7 +27,7 @@ class Package extends BaseEntity
     public function status()
     {
         $res = [];
-        $res[] = ['id' => 1, 'name' => 'Đang mua hàng'];
+        $res[] = ['id' => 1, 'name' => ''];
         $res[] = ['id' => 2, 'name' => 'Đã mua hàng'];
         $res[] = ['id' => 3, 'name' => 'Shop đang giao hàng'];
         $res[] = ['id' => 4, 'name' => 'Kho Trung Quốc nhận hàng'];

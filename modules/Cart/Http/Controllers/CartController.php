@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Cart\Services\CartServiceFactory;
 use Modules\Shop\Services\ShopServiceFactory;
+use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
 
 class CartController extends CommonController
@@ -28,6 +29,7 @@ class CartController extends CommonController
         $input = $request->all();
         try {
             $arrRules = [
+                'id' => 'required',
                 'amount' => 'required',
                 'domain' => 'required',
                 'image' => 'required',
@@ -35,16 +37,19 @@ class CartController extends CommonController
                 'name' => 'required',
                 'pro_link' => 'required',
                 'rate' => 'required',
+                'price' => 'required',
                 'site' => 'required'
             ];
             $arrMessages = [
-                'amount.required' => 'amount.required',
+                'id.required' => 'id.required',
+                'amount.required' => 'Phải nhập số lượng!',
                 'domain.required' => 'domain.required',
                 'image.required' => 'image.required',
                 'method.required' => 'method.required',
                 'name.required' => 'name.required',
                 'pro_link.required' => 'pro_link.required',
                 'rate.required' => 'rate.required',
+                'price.required' => 'Phải nhập đơn giá!',
                 'site.required' => 'site.required'
             ];
 
@@ -52,8 +57,50 @@ class CartController extends CommonController
             if ($validator->fails()) {
                 return $this->sendError('Error', $validator->errors()->all());
             }
+            $user = $request->user();
+            $cartI = CartServiceFactory::mCartService()->findById($input['id']);
+            if (empty($cartI)) {
+                return $this->sendError('Error', ['Không tồn tại sản phẩm!']);
+            }
 
             $update = CartServiceFactory::mCartService()->update($input);
+            if (!empty($input['order_id']) && $update) {
+                // Tinh tien hang
+                $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
+                if ($order) {
+                    $order = $order['order'];
+                    $arrCarts = $order['cart'];
+                    $tien_hang_old = $order['tien_hang'];
+                    $phi_tt_old = $order['phi_tam_tinh'];
+                    $tien_hang = 0;
+                    foreach ($arrCarts as $cartItem) {
+                        $price = $cartItem['price'];
+                        $rate = $cartItem['rate'];
+                        $amount = $cartItem['amount'];
+                        $tien_hang = $tien_hang + ($price * $rate * $amount);
+                    }
+                    $phi_tt = ($tien_hang * $phi_tt_old) / $tien_hang_old;
+
+                    $orderInput = array();
+                    $orderInput['id'] = $input['order_id'];
+                    $orderInput['tien_hang'] = $tien_hang;
+                    $orderInput['phi_tam_tinh'] = $phi_tt;
+                    $orderInput['tong'] = $tien_hang + $phi_tt;
+                    OrderServiceFactory::mOrderService()->update($orderInput);
+                }
+
+                // History
+                $content = 'Mã ' . $input['id'] . ', Trước khi sửa, SL: ' . $cartI['cart']['amount'] . ', đơn giá: ' . $cartI['cart']['price'] . '¥';
+                $content .= ' -> Sau khi sửa, SL: ' . $input['amount'] . ', đơn giá: ' . $input['price'] . '¥';
+                $history = [
+                    'user_id' => $user['id'],
+                    'order_id' => $input['order_id'],
+                    'type' => 8,
+                    'content' => $content
+                ];
+                OrderServiceFactory::mHistoryService()->create($history);
+            }
+
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
