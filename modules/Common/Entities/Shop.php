@@ -24,7 +24,7 @@ class Shop extends BaseEntity
     public function getRateAttribute()
     {
         $user = auth()->guard('api')->user();
-        if ($user->rate) {
+        if (!empty($user) && $user->rate) {
             return (int)$user->rate;
         }
         $setting = new Setting();
