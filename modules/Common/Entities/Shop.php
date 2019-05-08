@@ -23,8 +23,12 @@ class Shop extends BaseEntity
 
     public function getRateAttribute()
     {
+        $user = auth()->guard('api')->user();
+        if ($user->rate) {
+            return (int)$user->rate;
+        }
         $setting = new Setting();
-        $rowRate = $setting->where('key','=','rate')->first();
+        $rowRate = $setting->where('key', '=', 'rate')->first();
         return (int)$rowRate->value;
     }
 
