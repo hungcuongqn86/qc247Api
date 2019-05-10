@@ -33,6 +33,10 @@ class OrderService extends CommonService implements IOrderService
                 $q->orWhere('phone_number', 'LIKE', '%' . $sKeySearch . '%');
             });
         }
+        $code = isset($filter['code']) ? trim($filter['code']) : '';
+        if (!empty($code)) {
+            $query->where('id', '=', $code);
+        }
         $iuser = isset($filter['user_id']) ? $filter['user_id'] : 0;
         if ($iuser > 0) {
             $query->where('user_id', '=', $iuser);
