@@ -84,8 +84,6 @@ class OrderController extends CommonController
             return $this->sendError('Kết đơn không thành công!', $validator->errors()->all());
         }
 
-        return $this->sendError('Kết đơn không thành công!', ['Xin vui lòng thực hiện lại!']);
-
         $arrCartId = explode(',', $input['cart_ids']);
         $carts = CartServiceFactory::mCartService()->findByIds($arrCartId);
         foreach ($carts as $cart) {
