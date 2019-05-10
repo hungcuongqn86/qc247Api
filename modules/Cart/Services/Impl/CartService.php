@@ -43,6 +43,16 @@ class CartService extends CommonService implements ICartService
         }
     }
 
+    public function findByIds($ids)
+    {
+        $rResult = Cart::wherein('id', $ids)->get();
+        if (!empty($rResult)) {
+            return $rResult->toArray();
+        } else {
+            return null;
+        }
+    }
+
     public function create($arrInput)
     {
         $owner = new Cart($arrInput);
@@ -76,12 +86,6 @@ class CartService extends CommonService implements ICartService
             DB::rollBack();
             throw $e;
         }
-    }
-
-    public function findByIds($ids)
-    {
-        $rResult = Cart::wherein('id', $ids)->get()->toArray();
-        return $rResult;
     }
 
     public function delete($ids)
