@@ -17,6 +17,8 @@ class Package extends BaseEntity
         'contract_code',
         'ship_khach',
         'ship_tt',
+        'tra_shop',
+        'thanh_toan',
         'status',
         'note_tl',
         'is_deleted',
