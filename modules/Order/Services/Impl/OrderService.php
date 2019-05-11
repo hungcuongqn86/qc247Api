@@ -26,8 +26,7 @@ class OrderService extends CommonService implements IOrderService
         }))->where('is_deleted', '=', 0);
         $sKeySearch = isset($filter['key']) ? $filter['key'] : '';
         if (!empty($sKeySearch)) {
-            $query->where('id', 'LIKE', '%' . $sKeySearch . '%');
-            $query->orWhereHas('User', function ($q) use ($sKeySearch) {
+            $query->whereHas('User', function ($q) use ($sKeySearch) {
                 $q->where('name', 'LIKE', '%' . $sKeySearch . '%');
                 $q->orWhere('email', 'LIKE', '%' . $sKeySearch . '%');
                 $q->orWhere('phone_number', 'LIKE', '%' . $sKeySearch . '%');
