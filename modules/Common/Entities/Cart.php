@@ -25,6 +25,8 @@ class Cart extends BaseEntity
         'method',
         'name',
         'note',
+        'nv_note',
+        'kho_note',
         'price',
         'price_arr',
         'pro_link',
