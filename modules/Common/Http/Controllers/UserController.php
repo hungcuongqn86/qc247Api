@@ -87,6 +87,8 @@ class UserController extends CommonController
             }
 
             $input['password'] = bcrypt($input['password']);
+            $input['rate'] = 0;
+            $input['active'] = 1;
             $create = CommonServiceFactory::mUserService()->create($input);
             if ($create) {
                 $role = CommonServiceFactory::mRoleService()->findById($input['role_id']);
