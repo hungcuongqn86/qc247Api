@@ -327,7 +327,7 @@ class PassportController extends CommonController
 
         // Role
         // administrator
-        $role = Role::findByName('administrator');
+        /*$role = Role::findByName('administrator');
         $role->givePermissionTo('dashboard');
         $role->givePermissionTo('mpartner');
         $role->givePermissionTo('muser');
@@ -340,21 +340,22 @@ class PassportController extends CommonController
         $role->givePermissionTo('order');
         $role->givePermissionTo('package');
         $role->givePermissionTo('muser');
-        $role->givePermissionTo('setting');
+        $role->givePermissionTo('setting');*/
 
         // employees
         $role = Role::findByName('employees');
-        $role->givePermissionTo('dashboard');
+        $role->givePermissionTo('mcustumer');
+        /*$role->givePermissionTo('dashboard');
         $role->givePermissionTo('order');
-        $role->givePermissionTo('package');
+        $role->givePermissionTo('package');*/
 
         // owner
-        $role = Role::findByName('custumer');
+        /*$role = Role::findByName('custumer');
         $role->givePermissionTo('cart');
         $role->givePermissionTo('order');
         $role->givePermissionTo('package');
         $role->givePermissionTo('wallet');
-        $role->givePermissionTo('profile');
+        $role->givePermissionTo('profile');*/
         echo 1;
         exit;
     }

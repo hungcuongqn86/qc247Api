@@ -56,6 +56,10 @@ class TransactionController extends CommonController
             }
 
             $user = Auth::user();
+            if(!$user->hasRole('admin')){
+                return $this->sendError('Error', ['Not Permission!']);
+            }
+
             $input['created_by'] = $user['id'];
             // Du no
             $duNo = 0;
