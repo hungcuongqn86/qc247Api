@@ -25,6 +25,19 @@ class CommentController extends CommonController
         }
     }
 
+    public function getall(Request $request)
+    {
+        $input = $request->all();
+        try {
+            if (empty($input['orderId'])) {
+                return $this->sendError('Error', ['Đơn hàng không tồn tại!']);
+            }
+            return $this->sendResponse(OrderServiceFactory::mCommentService()->getByOrderId($input['orderId']), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function create(Request $request)
     {
         $input = $request->all();

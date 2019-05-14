@@ -18,6 +18,10 @@ Route::group(['middleware' => 'auth:api'], function () {
                 Route::post('/create', 'PackageController@create');
                 Route::post('/update', 'PackageController@update');
             });
+            Route::group(['prefix' => 'comment'], function () {
+                Route::get('/getall', 'CommentController@getall');
+                Route::post('/create', 'CommentController@create');
+            });
             Route::group(['prefix' => 'complain'], function () {
                 Route::get('/search', 'ComplainController@getByOrder');
                 Route::get('/detail/{id}', 'ComplainController@detail');
