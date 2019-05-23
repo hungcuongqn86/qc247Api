@@ -26,6 +26,15 @@ class OrderController extends CommonController
         }
     }
 
+    public function countByStatus(Request $request)
+    {
+        try {
+            return $this->sendResponse(OrderServiceFactory::mOrderService()->countByStatus(), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function myOrder(Request $request)
     {
         $input = $request->all();

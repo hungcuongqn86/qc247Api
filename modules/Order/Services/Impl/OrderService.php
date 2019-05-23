@@ -50,6 +50,16 @@ class OrderService extends CommonService implements IOrderService
         return $rResult;
     }
 
+    public function countByStatus()
+    {
+        $rResult = Order::where('is_deleted', '=', 0)->groupBy('status')->selectRaw('status, count(*) as total')->get();
+        if (!empty($rResult)) {
+            return $rResult;
+        } else {
+            return null;
+        }
+    }
+
     public function findById($id)
     {
         $rResult = Order::with(['User', 'Cart', 'Shop', 'History'])->with(array('Package' => function ($query) {
