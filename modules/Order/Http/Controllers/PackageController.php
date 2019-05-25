@@ -81,7 +81,56 @@ class PackageController extends CommonController
                 return $this->sendError('Error', $validator->errors()->all());
             }
 
+            $package = OrderServiceFactory::mPackageService()->findById($input['id']);
+            if (empty($package)) {
+                return $this->sendError('Error', ['Kiện hàng không tồn tại!']);
+            }
+
+            $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
+            if (empty($order)) {
+                return $this->sendError('Error', ['Đơn hàng không tồn tại!']);
+            }
+            $user = $request->user();
+
+            $history = array();
+            $orderInput = array();
+
+            if (!empty($input['contract_code'])) {
+                if ($package['package']['status'] < 2) {
+                    $input['status'] = 2;
+                }
+                if ($order['order']['status'] < 4) {
+                    $orderInput['id'] = $order['order']['id'];
+                    $orderInput['status'] = 4;
+                    $history = [
+                        'user_id' => $user['id'],
+                        'order_id' => $order['order']['id'],
+                        'type' => 4,
+                        'content' => 'Mã hợp đồng ' . $input['contract_code']
+                    ];
+                }
+            }
+
+            if (!empty($input['package_code'])) {
+                if ($package['package']['status'] < 3) {
+                    $input['status'] = 3;
+                }
+                if ($order['order']['status'] < 4) {
+                    $orderInput['id'] = $order['order']['id'];
+                    $orderInput['status'] = 4;
+                }
+            }
+
             $update = OrderServiceFactory::mPackageService()->update($input);
+            if (!empty($update)) {
+                if (!empty($orderInput['id'])) {
+                    OrderServiceFactory::mOrderService()->update($orderInput);
+                }
+
+                if (!empty($history['user_id'])) {
+                    OrderServiceFactory::mHistoryService()->create($history);
+                }
+            }
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
