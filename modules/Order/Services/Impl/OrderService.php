@@ -34,9 +34,15 @@ class OrderService extends CommonService implements IOrderService
         }
         $package_code = isset($filter['package_code']) ? trim($filter['package_code']) : '';
         if (!empty($package_code)) {
-            $query->whereHas('Package', function ($q) use ($package_code) {
-                $q->where('package_code', '=', $package_code);
-            });
+            if ($package_code === '#') {
+                $query->whereHas('Package', function ($q) use ($package_code) {
+                    $q->whereNull('package_code');
+                });
+            } else {
+                $query->whereHas('Package', function ($q) use ($package_code) {
+                    $q->where('package_code', '=', $package_code);
+                });
+            }
         }
         $code = isset($filter['code']) ? trim($filter['code']) : '';
         if (!empty($code)) {
