@@ -44,7 +44,7 @@ class PackageService extends CommonService implements IPackageService
         if ($istatus > 0) {
             $query->where('status', '=', $istatus);
         }
-        
+
         $query->orderBy('id', 'desc');
         $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
         $rResult = $query->paginate($limit)->toArray();
