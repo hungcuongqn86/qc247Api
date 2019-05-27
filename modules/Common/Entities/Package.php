@@ -26,6 +26,11 @@ class Package extends BaseEntity
         'updated_at'
     ];
 
+    public function Order()
+    {
+        return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
+
     public function status()
     {
         $res = [];

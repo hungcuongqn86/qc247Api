@@ -22,7 +22,33 @@ class PackageService extends CommonService implements IPackageService
 
     public function search($filter)
     {
-        return [];
+        $query = Package::with(array('Order' => function ($query) {
+            $query->with(['User', 'Cart', 'Shop']);
+            $query->where('is_deleted', '=', 0)->orderBy('id');
+        }))->where('is_deleted', '=', 0);
+
+        $sOrderCode = isset($filter['code']) ? $filter['code'] : '';
+        $query->whereHas('Order', function ($q) use ($sOrderCode) {
+            if (!empty($sOrderCode)) {
+                $q->where('id', '=', $sOrderCode);
+            }
+            $q->where('is_deleted', '=', 0);
+        });
+
+        $sPackageCode = isset($filter['package_code']) ? $filter['package_code'] : '';
+        if (!empty($sPackageCode)) {
+            $query->where('package_code', '=', $sPackageCode);
+        }
+
+        $istatus = isset($filter['status']) ? $filter['status'] : 0;
+        if ($istatus > 0) {
+            $query->where('status', '=', $istatus);
+        }
+        
+        $query->orderBy('id', 'desc');
+        $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
+        $rResult = $query->paginate($limit)->toArray();
+        return $rResult;
     }
 
     public function waitMoveOut($filter)

@@ -265,6 +265,13 @@ class PassportController extends CommonController
             $newobj->icon = 'fa fa-hand-paper-o';
             $nav[] = $newobj;
 
+            // Kien hang
+            $newobj = new \stdClass();
+            $newobj->name = 'Kiện hàng';
+            $newobj->url = '/package';
+            $newobj->icon = 'fa fa-cubes';
+            $nav[] = $newobj;
+
             // Kho
             $newobj = new \stdClass();
             $newobj->name = 'Kho VN';
