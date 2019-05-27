@@ -15,6 +15,7 @@ class Bill extends BaseEntity
         'user_id',
         'bill_date',
         'tong_can',
+        'gia_can_nang',
         'tien_can',
         'tien_thanh_ly',
         'status',

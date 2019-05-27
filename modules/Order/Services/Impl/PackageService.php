@@ -106,6 +106,16 @@ class PackageService extends CommonService implements IPackageService
         }
     }
 
+    public function findByPkCodes($ids)
+    {
+        $rResult = Package::wherein('package_code', $ids)->get();
+        if (!empty($rResult)) {
+            return $rResult->toArray();
+        } else {
+            return null;
+        }
+    }
+
     public function status()
     {
         $package = new Package();
