@@ -22,15 +22,23 @@ class PackageService extends CommonService implements IPackageService
 
     public function search($filter)
     {
+        $sKeySearch = isset($filter['key']) ? $filter['key'] : '';
         $query = Package::with(array('Order' => function ($query) {
             $query->with(['User', 'Cart', 'Shop']);
             $query->where('is_deleted', '=', 0)->orderBy('id');
         }))->where('is_deleted', '=', 0);
 
         $sOrderCode = isset($filter['code']) ? $filter['code'] : '';
-        $query->whereHas('Order', function ($q) use ($sOrderCode) {
+        $query->whereHas('Order', function ($q) use ($sOrderCode, $sKeySearch) {
             if (!empty($sOrderCode)) {
                 $q->where('id', '=', $sOrderCode);
+            }
+            if (!empty($sKeySearch)) {
+                $q->whereHas('User', function ($q) use ($sKeySearch) {
+                    $q->where('name', 'LIKE', '%' . $sKeySearch . '%');
+                    $q->orWhere('email', 'LIKE', '%' . $sKeySearch . '%');
+                    $q->orWhere('phone_number', 'LIKE', '%' . $sKeySearch . '%');
+                });
             }
             $q->where('is_deleted', '=', 0);
         });
