@@ -264,6 +264,28 @@ class PassportController extends CommonController
             $newobj->url = '/complain';
             $newobj->icon = 'fa fa-hand-paper-o';
             $nav[] = $newobj;
+
+            // Kho
+            $newobj = new \stdClass();
+            $newobj->name = 'Kho VN';
+            $newobj->url = '/warehouse';
+            $newobj->icon = 'fa fa-database';
+            $children = [];
+
+            $newchildren = new \stdClass();
+            $newchildren->name = 'Chờ xuất';
+            $newchildren->url = '/warehouse/wait';
+            $newchildren->icon = 'fa fa-file-zip-o';
+            $children[] = $newchildren;
+
+            $newchildren = new \stdClass();
+            $newchildren->name = 'Phiếu xuất';
+            $newchildren->url = '/warehouse/bill';
+            $newchildren->icon = 'fa fa-file-excel-o';
+            $children[] = $newchildren;
+
+            $newobj->children = $children;
+            $nav[] = $newobj;
         }
         /*if($user->hasPermissionTo('package')){
             $newobj = new \stdClass();
