@@ -24,6 +24,7 @@ class Package extends BaseEntity
         'weight',
         'weight_qd',
         'tien_can',
+        'bill_id',
         'is_deleted',
         'created_at',
         'updated_at'

@@ -84,6 +84,18 @@ class OrderService extends CommonService implements IOrderService
         }
     }
 
+    public function findByIds($ids)
+    {
+        $rResult = Order::with(array('Package' => function ($query) {
+            $query->where('is_deleted', '=', 0)->orderBy('id');
+        }))->wherein('id', $ids)->get();
+        if (!empty($rResult)) {
+            return $rResult->toArray();
+        } else {
+            return null;
+        }
+    }
+
     public function status()
     {
         $order = new Order();
