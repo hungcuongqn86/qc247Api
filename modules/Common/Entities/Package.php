@@ -21,6 +21,9 @@ class Package extends BaseEntity
         'thanh_toan',
         'status',
         'note_tl',
+        'weight',
+        'weight_qd',
+        'tien_can',
         'is_deleted',
         'created_at',
         'updated_at'
