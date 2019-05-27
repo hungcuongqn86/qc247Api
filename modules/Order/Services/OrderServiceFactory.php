@@ -8,6 +8,7 @@ use Modules\Order\Services\Impl\PackageService;
 use Modules\Order\Services\Impl\ComplainService;
 use Modules\Order\Services\Impl\ComplainProductService;
 use Modules\Order\Services\Impl\CommentService;
+use Modules\Order\Services\Impl\BillService;
 
 class OrderServiceFactory
 {
@@ -17,6 +18,7 @@ class OrderServiceFactory
     protected static $mPackageService;
     protected static $mComplainService;
     protected static $mComplainProductService;
+    protected static $mBillService;
 
     public static function mOrderService()
     {
@@ -64,5 +66,13 @@ class OrderServiceFactory
             self::$mCommentService = new CommentService();
         }
         return self::$mCommentService;
+    }
+
+    public static function mBillService()
+    {
+        if (self::$mBillService == null) {
+            self::$mBillService = new BillService();
+        }
+        return self::$mBillService;
     }
 }
