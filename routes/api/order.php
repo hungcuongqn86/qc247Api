@@ -19,6 +19,9 @@ Route::group(['middleware' => 'auth:api'], function () {
                 Route::post('/create', 'PackageController@create');
                 Route::post('/update', 'PackageController@update');
             });
+            Route::group(['prefix' => 'warehouse'], function () {
+                Route::get('/wait', 'WarehouseController@wait');
+            });
             Route::group(['prefix' => 'comment'], function () {
                 Route::get('/getall', 'CommentController@getall');
                 Route::post('/create', 'CommentController@create');

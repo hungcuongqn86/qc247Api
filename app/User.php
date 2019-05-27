@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Modules\Common\Entities\Partner;
 use Modules\Common\Entities\Transaction;
+use Modules\Common\Entities\Order;
 
 class User extends Authenticatable
 {
@@ -52,5 +53,10 @@ class User extends Authenticatable
     public function Transaction()
     {
         return $this->hasMany(Transaction::class, 'user_id', 'id');
+    }
+
+    public function Order()
+    {
+        return $this->hasMany(Order::class, 'user_id', 'id');
     }
 }
