@@ -67,6 +67,9 @@ class WarehouseController extends CommonController
                 $tongcan = $tongcan + $package['weight_qd'];
                 $soma = $soma + 1;
                 $orderIds[] = $package['order_id'];
+                if (!empty($package['bill_id'])) {
+                    return $this->sendError('Error', ['Mã vận đơn đã được tạo ở phiếu xuất khác!']);
+                }
             }
             $billinput['tong_can'] = $tongcan;
             $billinput['so_ma'] = $soma;
