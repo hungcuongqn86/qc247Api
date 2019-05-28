@@ -27,7 +27,7 @@ class BillService extends CommonService implements IBillService
 
     public function findById($id)
     {
-        $rResult = Bill::where('id', '=', $id)->first();
+        $rResult = Bill::with(['User', 'Employee', 'Package'])->where('id', '=', $id)->first();
         if (!empty($rResult)) {
             return array('bill' => $rResult->toArray());
         } else {

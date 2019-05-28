@@ -123,4 +123,13 @@ class WarehouseController extends CommonController
             return $this->sendError('Error', $e->getMessage());
         }
     }
+
+    public function billDetail($id)
+    {
+        try {
+            return $this->sendResponse(OrderServiceFactory::mBillService()->findById($id), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
 }
