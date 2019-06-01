@@ -25,6 +25,7 @@ Route::group(['middleware' => 'auth:api'], function () {
                 Route::get('/bills', 'WarehouseController@bills');
                 Route::get('/bill/status', 'WarehouseController@billStatus');
                 Route::post('/bill/create', 'WarehouseController@billCreate');
+                Route::post('/bill/confirm', 'WarehouseController@billConfirm');
                 Route::get('/bill/detail/{id}', 'WarehouseController@billDetail');
             });
             Route::group(['prefix' => 'comment'], function () {

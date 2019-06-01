@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
+use Modules\Common\Services\CommonServiceFactory;
 
 class WarehouseController extends CommonController
 {
@@ -105,6 +106,89 @@ class WarehouseController extends CommonController
     {
         try {
             return $this->sendResponse(OrderServiceFactory::mBillService()->findById($id), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function billConfirm(Request $request)
+    {
+        $input = $request->all();
+        $arrRules = [
+            'id' => 'required',
+        ];
+        $arrMessages = [
+            'id.required' => 'Không xác định được phiếu xuất!',
+        ];
+
+        $validator = Validator::make($input, $arrRules, $arrMessages);
+        if ($validator->fails()) {
+            return $this->sendError('Xuất kho không thành công!', $validator->errors()->all());
+        }
+
+        try {
+            //Bill
+            $billinput = array();
+            $billinput['id'] = $input['id'];
+            $billinput['status'] = 2;
+            $billinput['tong_can'] = 0;
+            $billinput['tien_can'] = 0;
+            $billinput['tien_thanh_ly'] = 0;
+            $bill = OrderServiceFactory::mBillService()->findById($input['id']);
+            $packages = $bill['bill']['package'];
+            foreach ($packages as $package) {
+                $billinput['tong_can'] = $billinput['tong_can'] + $package['weight_qd'];
+                $billinput['tien_can'] = $billinput['tien_can'] + $package['tien_can'];
+                $billinput['tien_thanh_ly'] = $billinput['tien_thanh_ly'] + $package['tien_thanh_ly'];
+            }
+
+            if ($billinput['tien_thanh_ly'] > $bill['bill']['user']['debt']) {
+                return $this->sendError('Xuất kho không thành công!', ['Dư nợ không đủ để thực hiện thanh lý!']);
+            }
+
+            $update = OrderServiceFactory::mBillService()->update($billinput);
+            if (!empty($update)) {
+                // Thanh ly package
+                foreach ($packages as $package) {
+                    $packageInput = array(
+                        'id' => $package['id'],
+                        'status' => 7
+                    );
+                    $pkupdate = OrderServiceFactory::mPackageService()->update($packageInput);
+                    if (!empty($pkupdate)) {
+                        //Thanh ly order
+                        $order = OrderServiceFactory::mOrderService()->findById($pkupdate['order_id']);
+                        $tongTien = $order['order']['tong'];
+                        $arrPk = $order['order']['package'];
+                        $tigia = $order['order']['rate'];
+                        foreach ($arrPk as $pk) {
+                            if ($pk['ship_khach'] && $pk['ship_khach'] > 0) {
+                                $ndt = $pk['ship_khach'];
+                                $vnd = $ndt * $tigia;
+                                $tongTien = $tongTien + $vnd;
+                            }
+                        }
+
+                        $orderInput = array();
+                        $orderInput['id'] = $order['order']['id'];
+                        $orderInput['status'] = 5;
+                        $orderInput['thanh_toan'] = $tongTien;
+                        OrderServiceFactory::mOrderService()->update($orderInput);
+                    }
+                }
+
+                // Transaction
+                $transaction = [
+                    'user_id' => $update['user_id'],
+                    'type' => 6,
+                    'code' => 'XKTL' . $update['id'],
+                    'value' => $update['tien_can'] + $update['tien_thanh_ly'],
+                    'debt' => $bill['bill']['user']['debt'] - ($update['tien_can'] + $update['tien_thanh_ly']),
+                    'content' => 'Xuất kho thanh lý, mã phiếu ' . $update['id']
+                ];
+                CommonServiceFactory::mTransactionService()->create($transaction);
+            }
+            return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }
