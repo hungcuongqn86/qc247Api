@@ -39,6 +39,15 @@ class WarehouseController extends CommonController
         }
     }
 
+    public function billStatus()
+    {
+        try {
+            return $this->sendResponse(OrderServiceFactory::mBillService()->status(), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function billCreate(Request $request)
     {
         $input = $request->all();
