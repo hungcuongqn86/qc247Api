@@ -22,7 +22,6 @@ class BillService extends CommonService implements IBillService
 
     public function search($filter)
     {
-        $sKeySearch = isset($filter['key']) ? $filter['key'] : '';
         $query = Bill::with(['User', 'Employee', 'Package'])->where('is_deleted', '=', 0);
 
         $Code = isset($filter['code']) ? $filter['code'] : '';
@@ -33,6 +32,15 @@ class BillService extends CommonService implements IBillService
         $istatus = isset($filter['status']) ? $filter['status'] : 0;
         if ($istatus > 0) {
             $query->where('status', '=', $istatus);
+        }
+
+        $sKeySearch = isset($filter['key']) ? $filter['key'] : '';
+        if (!empty($sKeySearch)) {
+            $query->whereHas('User', function ($q) use ($sKeySearch) {
+                $q->where('name', 'LIKE', '%' . $sKeySearch . '%');
+                $q->orWhere('email', 'LIKE', '%' . $sKeySearch . '%');
+                $q->orWhere('phone_number', 'LIKE', '%' . $sKeySearch . '%');
+            });
         }
 
         $query->orderBy('id', 'desc');
