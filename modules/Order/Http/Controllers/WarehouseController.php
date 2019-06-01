@@ -60,7 +60,7 @@ class WarehouseController extends CommonController
         $user = $request->user();
         $billinput = array();
         $billinput['user_id'] = $input['user_id'];
-        $billinput['employee'] = $user['id'];
+        $billinput['employee_id'] = $user['id'];
         $billinput['status'] = 1;
         $billinput['so_ma'] = 0;
         try {
