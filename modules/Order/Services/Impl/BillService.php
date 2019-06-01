@@ -22,7 +22,23 @@ class BillService extends CommonService implements IBillService
 
     public function search($filter)
     {
-        return null;
+        $sKeySearch = isset($filter['key']) ? $filter['key'] : '';
+        $query = Bill::with(['User', 'Employee', 'Package'])->where('is_deleted', '=', 0);
+
+        $Code = isset($filter['code']) ? $filter['code'] : '';
+        if (!empty($Code)) {
+            $query->where('id', '=', $Code);
+        }
+
+        $istatus = isset($filter['status']) ? $filter['status'] : 0;
+        if ($istatus > 0) {
+            $query->where('status', '=', $istatus);
+        }
+
+        $query->orderBy('id', 'desc');
+        $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
+        $rResult = $query->paginate($limit)->toArray();
+        return $rResult;
     }
 
     public function findById($id)
