@@ -69,9 +69,11 @@ class PackageService extends CommonService implements IPackageService
             });
             $query->with(array('Package' => function ($query) {
                 $query->where('status', '=', 6);
+                $query->whereNull('bill_id');
                 $query->where('is_deleted', '=', 0)->orderBy('id');
             }));
         }))->where('is_deleted', '=', 0);
+
         $sOrderCode = isset($filter['code']) ? $filter['code'] : '';
         $sPackageCode = isset($filter['package_code']) ? $filter['package_code'] : '';
         $query->whereHas('Order', function ($q) use ($sOrderCode, $sPackageCode) {
@@ -84,9 +86,11 @@ class PackageService extends CommonService implements IPackageService
                     $q->where('package_code', '=', $sPackageCode);
                 }
                 $q->where('is_deleted', '=', 0);
+                $q->whereNull('bill_id');
                 $q->where('status', '=', 6);
             });
         });
+
         $email = isset($filter['email']) ? trim($filter['email']) : '';
         if (!empty($email)) {
             $query->where('email', '=', $email);
