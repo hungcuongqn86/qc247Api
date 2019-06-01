@@ -30,6 +30,9 @@ class BillService extends CommonService implements IBillService
         $rResult = Bill::with(['User', 'Employee'])->with(array('Package' => function ($query) {
             $query->where('is_deleted', '=', 0)->orderBy('id');
             $query->with(array('Order' => function ($query) {
+                $query->with(array('Cart' => function ($query) {
+                    $query->where('is_deleted', '=', 0)->orderBy('id');
+                }));
                 $query->where('is_deleted', '=', 0)->orderBy('id');
             }));
         }))->where('id', '=', $id)->first();
