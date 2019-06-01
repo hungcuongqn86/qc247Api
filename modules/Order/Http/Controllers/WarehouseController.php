@@ -181,7 +181,7 @@ class WarehouseController extends CommonController
                 $transaction = [
                     'user_id' => $update['user_id'],
                     'type' => 6,
-                    'code' => 'XKTL' . $update['id'],
+                    'code' => 'XKTL.' . $update['id'],
                     'value' => $update['tien_can'] + $update['tien_thanh_ly'],
                     'debt' => $bill['bill']['user']['debt'] - ($update['tien_can'] + $update['tien_thanh_ly']),
                     'content' => 'Xuất kho thanh lý, mã phiếu ' . $update['id']
