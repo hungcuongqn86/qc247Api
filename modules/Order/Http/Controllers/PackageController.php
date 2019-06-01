@@ -121,6 +121,38 @@ class PackageController extends CommonController
                 }
             }
 
+            // Tien can nang
+            if (!empty($input['weight_qd'])) {
+                $weight_qd = $input['weight_qd'];
+                $gia_can_nang = 0;
+                if ($weight_qd < 10) {
+                    $gia_can_nang = 27000;
+                }
+                if (($weight_qd >= 10) && ($weight_qd <= 30)) {
+                    $gia_can_nang = 23000;
+                }
+                if ($weight_qd > 30) {
+                    $gia_can_nang = 19000;
+                }
+                $input['gia_can'] = $gia_can_nang;
+                $input['tien_can'] = $gia_can_nang * $weight_qd;
+            }
+
+            // Tien thanh ly
+            $tongTien = $order['order']['tong'];
+            $arrPk = $order['order']['package'];
+            $tigia = $order['order']['rate'];
+            foreach ($arrPk as $pk) {
+                if ($pk['ship_khach'] && $pk['ship_khach'] > 0) {
+                    $ndt = $pk['ship_khach'];
+                    $vnd = $ndt * $tigia;
+                    $tongTien = $tongTien + $vnd;
+                }
+            }
+            $thanh_toan = empty($order['thanh_toan']) ? 0 : $order['thanh_toan'];
+            $tienthanhly = $tongTien - $thanh_toan;
+            $input['tien_thanh_ly'] = $tienthanhly;
+
             $update = OrderServiceFactory::mPackageService()->update($input);
             if (!empty($update)) {
                 if (!empty($orderInput['id'])) {
