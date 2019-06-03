@@ -70,6 +70,7 @@ class PackageService extends CommonService implements IPackageService
             $query->with(array('Package' => function ($query) {
                 $query->where('status', '=', 6);
                 $query->whereNull('bill_id');
+                $query->whereNotNull('weight_qd');
                 $query->where('is_deleted', '=', 0)->orderBy('id');
             }));
         }))->where('is_deleted', '=', 0);
@@ -87,6 +88,7 @@ class PackageService extends CommonService implements IPackageService
                 }
                 $q->where('is_deleted', '=', 0);
                 $q->whereNull('bill_id');
+                $q->whereNotNull('weight_qd');
                 $q->where('status', '=', 6);
             });
         });
