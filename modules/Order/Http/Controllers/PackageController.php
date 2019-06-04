@@ -143,18 +143,22 @@ class PackageController extends CommonController
             }
 
             // Tien thanh ly
-            $tongTien = $order['order']['tong'];
+
             $arrPk = $order['order']['package'];
-            $tigia = $order['order']['rate'];
-            foreach ($arrPk as $pk) {
-                if ($pk['ship_khach'] && $pk['ship_khach'] > 0) {
-                    $ndt = $pk['ship_khach'];
-                    $vnd = $ndt * $tigia;
-                    $tongTien = $tongTien + $vnd;
+            $tienthanhly = 0;
+            if ($arrPk[0]['id'] == $input['id']) {
+                $tongTien = $order['order']['tong'];
+                $tigia = $order['order']['rate'];
+                foreach ($arrPk as $pk) {
+                    if ($pk['ship_khach'] && $pk['ship_khach'] > 0) {
+                        $ndt = $pk['ship_khach'];
+                        $vnd = $ndt * $tigia;
+                        $tongTien = $tongTien + $vnd;
+                    }
                 }
+                $thanh_toan = empty($order['order']['thanh_toan']) ? 0 : $order['order']['thanh_toan'];
+                $tienthanhly = $tongTien - $thanh_toan;
             }
-            $thanh_toan = empty($order['thanh_toan']) ? 0 : $order['thanh_toan'];
-            $tienthanhly = $tongTien - $thanh_toan;
             $input['tien_thanh_ly'] = $tienthanhly;
 
             $update = OrderServiceFactory::mPackageService()->update($input);
