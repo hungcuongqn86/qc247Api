@@ -3,6 +3,7 @@
 namespace Modules\Order\Services\Impl;
 
 use Modules\Common\Entities\Order;
+use Modules\Common\Entities\Comment;
 use Modules\Common\Services\Impl\CommonService;
 use Modules\Order\Services\Intf\IOrderService;
 use Illuminate\Support\Facades\DB;
@@ -65,6 +66,24 @@ class OrderService extends CommonService implements IOrderService
     public function countByStatus()
     {
         $rResult = Order::where('is_deleted', '=', 0)->groupBy('status')->selectRaw('status, count(*) as total')->get();
+        if (!empty($rResult)) {
+            return $rResult;
+        } else {
+            return null;
+        }
+    }
+
+    public function comments($filter)
+    {
+        $query = Comment::with(['Order'])->where('is_deleted', '=', 0)->where('is_read', '=', 0);
+        $userid = $filter['user_id'];
+        /*if ($filter['type'] == 1) {
+            $query->whereHas('Order', function ($q) use ($userid) {
+                $q->where('user_id', '=', $userid);
+            });
+        }*/
+        $query->where('user_id', '<>', $userid);
+        $rResult = $query->get();
         if (!empty($rResult)) {
             return $rResult;
         } else {

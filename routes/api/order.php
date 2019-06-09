@@ -4,6 +4,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => 'order', 'namespace' => 'Modules\Order\Http\Controllers'], function () {
             Route::get('/search', 'OrderController@search');
             Route::get('/count', 'OrderController@countByStatus');
+            Route::get('/comments', 'OrderController@comments');
             Route::get('/mycount', 'OrderController@myCountByStatus');
             Route::get('/myorder', 'OrderController@myOrder');
             Route::get('/status', 'OrderController@status');

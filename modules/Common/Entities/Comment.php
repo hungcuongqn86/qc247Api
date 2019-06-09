@@ -17,6 +17,7 @@ class Comment extends BaseEntity
         'order_id',
         'content',
         'is_admin',
+        'is_read',
         'is_deleted',
         'created_at',
         'updated_at'
