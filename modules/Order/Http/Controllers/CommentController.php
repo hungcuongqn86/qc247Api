@@ -32,7 +32,65 @@ class CommentController extends CommonController
             if (empty($input['orderId'])) {
                 return $this->sendError('Error', ['Đơn hàng không tồn tại!']);
             }
+            $user = $request->user();
+            $order = OrderServiceFactory::mOrderService()->findById($input['orderId']);
+            if ($order && ($user['type'] == 1) && $order['order']['user_id'] != $user['id']) {
+                return $this->sendError('Error', ['Không có quyền truy cập!'], 403);
+            }
+
             return $this->sendResponse(OrderServiceFactory::mCommentService()->getByOrderId($input['orderId']), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function isread(Request $request)
+    {
+        $input = $request->all();
+        $arrRules = [
+            'order_id' => 'required'
+        ];
+        $arrMessages = [
+            'order_id.required' => 'Không xác định được đơn hàng!'
+        ];
+
+        $user = $request->user();
+        $input['user_id'] = $user['id'];
+        $validator = Validator::make($input, $arrRules, $arrMessages);
+        if ($validator->fails()) {
+            return $this->sendError('Error', $validator->errors()->all());
+        }
+
+        $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
+        if (empty($order)) {
+            return $this->sendError('Error', ['Đơn hàng không tồn tại!']);
+        }
+
+        if (($user['type'] == 1) && $order['order']['user_id'] != $user['id']) {
+            return $this->sendError('Error', ['Không có quyền truy cập!'], 403);
+        }
+
+        try {
+            // comment
+            $comments = OrderServiceFactory::mCommentService()->getByOrderId($input['order_id']);
+            foreach ($comments as $comment) {
+                if (($user['type'] == 1) && $comment['is_admin'] == 1 && $comment['is_read'] == 0) {
+                    $commentInput = array(
+                        'id' => $comment['id'],
+                        'is_read' => 1
+                    );
+                    OrderServiceFactory::mCommentService()->update($commentInput);
+                }
+                if (($user['type'] == 0) && $comment['is_admin'] == 0 && $comment['is_read'] == 0) {
+                    $commentInput = array(
+                        'id' => $comment['id'],
+                        'is_read' => 1
+                    );
+                    OrderServiceFactory::mCommentService()->update($commentInput);
+                }
+            }
+
+            return $this->sendResponse($comments, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }

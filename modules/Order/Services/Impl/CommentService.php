@@ -48,4 +48,22 @@ class CommentService extends CommonService implements ICommentService
             throw $e;
         }
     }
+
+    public function update($arrInput)
+    {
+        $id = $arrInput['id'];
+        DB::beginTransaction();
+        try {
+            $order = Comment::find($id);
+            $order->update($arrInput);
+            DB::commit();
+            return $order;
+        } catch (QueryException $e) {
+            DB::rollBack();
+            throw $e;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

@@ -70,10 +70,15 @@ class OrderController extends CommonController
         }
     }
 
-    public function detail($id)
+    public function detail($id, Request $request)
     {
         try {
-            return $this->sendResponse(OrderServiceFactory::mOrderService()->findById($id), 'Successfully.');
+            $user = $request->user();
+            $order = OrderServiceFactory::mOrderService()->findById($id);
+            if ($order && ($user['type'] == 1) && $order['order']['user_id'] != $user['id']) {
+                return $this->sendError('Error', ['Không có quyền truy cập!'], 403);
+            }
+            return $this->sendResponse($order, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }
