@@ -102,6 +102,34 @@ class WarehouseController extends CommonController
         }
     }
 
+    public function billDelete(Request $request)
+    {
+        $input = $request->all();
+        $bill = OrderServiceFactory::mBillService()->findById($input['id']);
+        if (empty($bill)) {
+            return $this->sendError('Error', ['Không tồn tại phiếu xuất!']);
+        }
+        try {
+            // Package
+            $packages = $bill['bill']['package'];
+            foreach ($packages as $package) {
+                $packageInput = array(
+                    'id' => $package['id'],
+                    'bill_id' => null
+                );
+                OrderServiceFactory::mPackageService()->update($packageInput);
+            }
+            $billInput = array(
+                'id' => $input['id'],
+                'is_deleted' => 1
+            );
+            OrderServiceFactory::mBillService()->update($billInput);
+            return $this->sendResponse(true, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function billDetail($id)
     {
         try {
