@@ -109,6 +109,9 @@ class WarehouseController extends CommonController
         if (empty($bill)) {
             return $this->sendError('Error', ['Không tồn tại phiếu xuất!']);
         }
+        if ($bill['bill']['status'] == 2) {
+            return $this->sendError('Error', ['Không thể xóa phiếu xuất đã xuất kho!']);
+        }
         try {
             // Package
             $packages = $bill['bill']['package'];
