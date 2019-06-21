@@ -33,15 +33,33 @@ class OrderController extends CommonController
         $input = $request->all();
         try {
             $data = OrderServiceFactory::mOrderService()->export($input);
+            $orders = [];
+            foreach ($data as $order) {
+                foreach ($order['cart'] as $key => $cart) {
+                    if (!$key) {
+                        $orders[] = array(
+                            'id' => $order['id'],
+                            'link' => $cart['pro_link']
+                        );
+                    } else {
+                        $orders[] = array(
+                            'id' => '',
+                            'link' => $cart['pro_link']
+                        );
+                    }
+                }
+            }
 
-            $export = [
-                [1, 2, 3],
-                [4, 5, 6]
-            ];
+            $fileName = time() . '.orders';
+            $res = Excel::create($fileName, function ($excel) use ($orders) {
+                $excel->sheet('Orders-link', function ($sheet) use ($orders) {
+                    $sheet->fromArray($orders);
+                    $sheet->setCellValue('A1', 'Đơn hàng');
+                    $sheet->setCellValue('B1', 'Link sp');
+                });
+            })->store('xlsx', false, true);
 
-            Excel::store($export, 'invoices.xlsx');
-
-            return $this->sendResponse(OrderServiceFactory::mOrderService()->export($input), 'Successfully.');
+            return $this->sendResponse($res, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }

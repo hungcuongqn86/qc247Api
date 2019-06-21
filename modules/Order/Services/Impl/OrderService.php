@@ -97,7 +97,7 @@ class OrderService extends CommonService implements IOrderService
         }
         $query->orderBy('id', 'desc');
 
-        $rResult = $query->get();
+        $rResult = $query->get(['id'])->toArray();
         return $rResult;
     }
 
