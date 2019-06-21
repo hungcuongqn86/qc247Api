@@ -8,6 +8,8 @@ use Modules\Order\Services\OrderServiceFactory;
 use Modules\Cart\Services\CartServiceFactory;
 use Modules\Common\Services\CommonServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
+use Excel;
+use File;
 
 class OrderController extends CommonController
 {
@@ -21,6 +23,25 @@ class OrderController extends CommonController
         $input = $request->all();
         try {
             return $this->sendResponse(OrderServiceFactory::mOrderService()->search($input), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function export(Request $request)
+    {
+        $input = $request->all();
+        try {
+            $data = OrderServiceFactory::mOrderService()->export($input);
+
+            $export = [
+                [1, 2, 3],
+                [4, 5, 6]
+            ];
+
+            Excel::store($export, 'invoices.xlsx');
+
+            return $this->sendResponse(OrderServiceFactory::mOrderService()->export($input), 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }

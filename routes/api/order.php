@@ -3,6 +3,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => 'v1'], function () {
         Route::group(['prefix' => 'order', 'namespace' => 'Modules\Order\Http\Controllers'], function () {
             Route::get('/search', 'OrderController@search');
+            Route::get('/export', 'OrderController@export');
             Route::get('/count', 'OrderController@countByStatus');
             Route::get('/comments', 'OrderController@comments');
             Route::get('/mycount', 'OrderController@myCountByStatus');
