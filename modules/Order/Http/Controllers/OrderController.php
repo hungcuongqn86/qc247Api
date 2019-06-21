@@ -57,7 +57,7 @@ class OrderController extends CommonController
                     $sheet->setCellValue('A1', 'Đơn hàng');
                     $sheet->setCellValue('B1', 'Link sp');
                 });
-            })->store('xlsx', false, true);
+            })->store('xlsx', public_path('exports'), true);
 
             return $this->sendResponse($res, 'Successfully.');
         } catch (\Exception $e) {
