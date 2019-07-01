@@ -63,12 +63,20 @@ class CartController extends CommonController
                 return $this->sendError('Error', ['Không tồn tại sản phẩm!']);
             }
 
-            $update = CartServiceFactory::mCartService()->update($input);
-            if (!empty($input['order_id']) && $update) {
-                // Tinh tien hang
+            $order = array();
+            if (!empty($input['order_id'])) {
                 $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
                 if ($order) {
                     $order = $order['order'];
+                    if ($order['status'] == 5) {
+                        return $this->sendError('Error', ['Đơn đã thanh lý!']);
+                    }
+                }
+            }
+
+            $update = CartServiceFactory::mCartService()->update($input);
+            if (!empty($input['order_id']) && $update) {
+                if ($order) {
                     $arrCarts = $order['cart'];
                     $tien_hang_old = $order['tien_hang'];
                     $phi_tt_old = $order['phi_tam_tinh'];
