@@ -87,7 +87,16 @@ class CartController extends CommonController
                         $amount = $cartItem['amount'];
                         $tien_hang = $tien_hang + ($price * $rate * $amount);
                     }
-                    $phi_tt = ($tien_hang * $phi_tt_old) / $tien_hang_old;
+                    if ($tien_hang_old > 0) {
+                        $phi_tt = ($tien_hang * $phi_tt_old) / $tien_hang_old;
+                    } else {
+                        if (!empty($order['user']['cost_percent'])) {
+                            $tigia = $order['user']['cost_percent'];
+                            $phi_tt = $tien_hang * $tigia / 100;
+                        } else {
+                            $phi_tt = 0;
+                        }
+                    }
 
                     $orderInput = array();
                     $orderInput['id'] = $input['order_id'];
