@@ -76,6 +76,10 @@ class CartController extends CommonController
 
             $update = CartServiceFactory::mCartService()->update($input);
             if (!empty($input['order_id']) && $update) {
+                $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
+                if ($order) {
+                    $order = $order['order'];
+                }
                 if ($order) {
                     $arrCarts = $order['cart'];
                     $tien_hang_old = $order['tien_hang'];
