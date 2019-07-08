@@ -33,15 +33,29 @@ class OrderService extends CommonService implements IOrderService
                 $q->orWhere('phone_number', 'LIKE', '%' . $sKeySearch . '%');
             });
         }
+
+        $iPkStatus = isset($filter['pk_status']) ? $filter['pk_status'] : 0;
         $package_code = isset($filter['package_code']) ? trim($filter['package_code']) : '';
         if (!empty($package_code)) {
             if ($package_code === '#') {
-                $query->whereHas('Package', function ($q) use ($package_code) {
+                $query->whereHas('Package', function ($q) use ($package_code, $iPkStatus) {
                     $q->whereNull('package_code');
+                    if ($iPkStatus > 0) {
+                        $q->where('status', '=', $iPkStatus);
+                    }
                 });
             } else {
-                $query->whereHas('Package', function ($q) use ($package_code) {
+                $query->whereHas('Package', function ($q) use ($package_code, $iPkStatus) {
                     $q->where('package_code', '=', $package_code);
+                    if ($iPkStatus > 0) {
+                        $q->where('status', '=', $iPkStatus);
+                    }
+                });
+            }
+        } else {
+            if ($iPkStatus > 0) {
+                $query->whereHas('Package', function ($q) use ($iPkStatus) {
+                    $q->where('status', '=', $iPkStatus);
                 });
             }
         }
