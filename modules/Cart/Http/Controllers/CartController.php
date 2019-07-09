@@ -74,6 +74,7 @@ class CartController extends CommonController
                 }
             }
 
+
             $update = CartServiceFactory::mCartService()->update($input);
             if (!empty($input['order_id']) && $update) {
                 $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
@@ -89,14 +90,14 @@ class CartController extends CommonController
                         $price = $cartItem['price'];
                         $rate = $cartItem['rate'];
                         $amount = $cartItem['amount'];
-                        $tien_hang = $tien_hang + ($price * $rate * $amount);
+                        $tien_hang = $tien_hang + round($price * $rate * $amount);
                     }
                     if ($tien_hang_old > 0) {
-                        $phi_tt = ($tien_hang * $phi_tt_old) / $tien_hang_old;
+                        $phi_tt = round(($tien_hang * $phi_tt_old) / $tien_hang_old);
                     } else {
                         if (!empty($order['user']['cost_percent'])) {
                             $tigia = $order['user']['cost_percent'];
-                            $phi_tt = $tien_hang * $tigia / 100;
+                            $phi_tt = round($tien_hang * $tigia / 100);
                         } else {
                             $phi_tt = 0;
                         }
