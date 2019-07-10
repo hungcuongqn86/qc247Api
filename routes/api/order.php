@@ -10,6 +10,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/myorder', 'OrderController@myOrder');
             Route::get('/status', 'OrderController@status');
             Route::post('/create', 'OrderController@create');
+            Route::put('/update', 'OrderController@update');
             Route::post('/baogia', 'OrderController@baogia');
             Route::post('/datcoc', 'OrderController@datcoc');
             Route::get('/detail/{id}', 'OrderController@detail');

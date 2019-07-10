@@ -199,6 +199,34 @@ class OrderController extends CommonController
         }
     }
 
+    public function update(Request $request)
+    {
+        $input = $request->all();
+        $arrRules = [
+            'id' => 'required'
+        ];
+        $arrMessages = [
+            'id.required' => 'id.required'
+        ];
+
+        $validator = Validator::make($input, $arrRules, $arrMessages);
+        if ($validator->fails()) {
+            return $this->sendError('Error', $validator->errors()->all());
+        }
+
+        $order = OrderServiceFactory::mOrderService()->findById($input['id']);
+        if (!empty($order) && ($order['order']['status'] > 2)) {
+            return $this->sendError('Error', ['Không thể xóa đơn đã đặt cọc!']);
+        }
+
+        try {
+            $update = OrderServiceFactory::mOrderService()->update($input);
+            return $this->sendResponse($update, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function baogia(Request $request)
     {
         $input = $request->all();
