@@ -74,7 +74,7 @@ class CartController extends CommonController
                 }
             }
 
-
+            $input['price'] = self::convertPrice($input['price']);
             $update = CartServiceFactory::mCartService()->update($input);
             if (!empty($input['order_id']) && $update) {
                 $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
@@ -87,7 +87,7 @@ class CartController extends CommonController
                     $phi_tt_old = $order['phi_tam_tinh'];
                     $tien_hang = 0;
                     foreach ($arrCarts as $cartItem) {
-                        $price = $cartItem['price'];
+                        $price = self::convertPrice($cartItem['price']);
                         $rate = $cartItem['rate'];
                         $amount = $cartItem['amount'];
                         $tien_hang = $tien_hang + round($price * $rate * $amount);
@@ -127,6 +127,14 @@ class CartController extends CommonController
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }
+    }
+
+    private function convertPrice($priceStr)
+    {
+        $price = str_replace(' ', '', $priceStr);
+        $price = explode('-', $price)[0];
+        $price = str_replace(',', '.', $price);
+        return $price;
     }
 
     public function create(Request $request)
@@ -171,6 +179,7 @@ class CartController extends CommonController
                 $inputCart['shop_id'] = $shop['id'];
                 $user = $request->user();
                 $inputCart['user_id'] = $user->id;
+                $inputCart['price'] = self::convertPrice($inputCart['price']);
                 $inputCart['price_arr'] = json_encode($inputCart['price_arr']);
                 $create = CartServiceFactory::mCartService()->create($inputCart);
             }
