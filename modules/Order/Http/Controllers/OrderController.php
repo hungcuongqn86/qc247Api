@@ -282,6 +282,11 @@ class OrderController extends CommonController
             return $this->sendError('Error', $validator->errors()->all());
         }
 
+        $order = OrderServiceFactory::mOrderService()->findById($input['id']);
+        if (!empty($order) && ($order['order']['status'] > 2)) {
+            return $this->sendError('Error', ['Đơn đã đặt cọc!']);
+        }
+
         try {
             $user = $request->user();
             // Transaction
