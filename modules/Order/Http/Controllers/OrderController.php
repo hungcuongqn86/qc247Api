@@ -103,7 +103,13 @@ class OrderController extends CommonController
     {
         try {
             $user = $request->user();
-            return $this->sendResponse(OrderServiceFactory::mOrderService()->myCountByStatus($user->id), 'Successfully.');
+            $arrCountOrder = OrderServiceFactory::mOrderService()->myCountByStatus($user->id);
+            $retn = array();
+            foreach ($arrCountOrder as $item) {
+                $item['type'] = 'od';
+                $retn[] = $item;
+            }
+            return $this->sendResponse($retn, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }
