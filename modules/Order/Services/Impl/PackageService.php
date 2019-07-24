@@ -3,6 +3,7 @@
 namespace Modules\Order\Services\Impl;
 
 use App\User;
+use Modules\Common\Entities\Order;
 use Modules\Common\Entities\Package;
 use Modules\Common\Services\Impl\CommonService;
 use Modules\Order\Services\Intf\IPackageService;
@@ -57,6 +58,19 @@ class PackageService extends CommonService implements IPackageService
         $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
         $rResult = $query->paginate($limit)->toArray();
         return $rResult;
+    }
+
+    public function myOrderCountByStatus($userId)
+    {
+        $rResult = Package::where('is_deleted', '=', 0)->whereHas('Order', function ($q) use ($userId) {
+            $q->where('user_id', '=', $userId);
+            $q->where('is_deleted', '=', 0);
+        })->groupBy('status')->selectRaw('status, count(*) as total')->get();
+        if (!empty($rResult)) {
+            return $rResult;
+        } else {
+            return null;
+        }
     }
 
     public function waitMoveOut($filter)
