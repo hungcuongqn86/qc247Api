@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Services\CommonServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends CommonController
 {
@@ -70,6 +71,8 @@ class CommentController extends CommonController
             return $this->sendError('Error', ['Không có quyền truy cập!'], 403);
         }
 
+        $currentUser = Auth::user();
+
         try {
             // comment
             $comments = OrderServiceFactory::mCommentService()->getWaitByOrderId($input['order_id'], $user['id']);
@@ -86,17 +89,19 @@ class CommentController extends CommonController
                     );
                     OrderServiceFactory::mCommentUsersService()->create($commentUserInput);
                 }
-                if (($user['type'] == 0) && $comment['is_admin'] == 0) {
-                    $commentInput = array(
-                        'id' => $comment['id'],
-                        'is_read' => 1
-                    );
-                    OrderServiceFactory::mCommentService()->update($commentInput);
-                    $commentUserInput = array(
-                        'user_id' => $user['id'],
-                        'comment_id' => $comment['id']
-                    );
-                    OrderServiceFactory::mCommentUsersService()->create($commentUserInput);
+                if ($user['type'] == 0) {
+                    if ($currentUser->hasRole('admin') || ($comment['is_admin'] == 0)) {
+                        $commentInput = array(
+                            'id' => $comment['id'],
+                            'is_read' => 1
+                        );
+                        OrderServiceFactory::mCommentService()->update($commentInput);
+                        $commentUserInput = array(
+                            'user_id' => $user['id'],
+                            'comment_id' => $comment['id']
+                        );
+                        OrderServiceFactory::mCommentUsersService()->create($commentUserInput);
+                    }
                 }
             }
 

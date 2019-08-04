@@ -134,7 +134,7 @@ class OrderService extends CommonService implements IOrderService
                 $q->where('user_id', '=', $userid);
             });
         }
-        if ($filter['type'] == 0) {
+        if ($filter['type'] == 0 and !$filter['admin']) {
             $query->where('is_admin', '=', 0);
         }
         $query->whereDoesntHave('CommentUsers', function ($q) use ($userid) {

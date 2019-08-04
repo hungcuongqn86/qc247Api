@@ -8,6 +8,7 @@ use Modules\Order\Services\OrderServiceFactory;
 use Modules\Cart\Services\CartServiceFactory;
 use Modules\Common\Services\CommonServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
+use Illuminate\Support\Facades\Auth;
 use Excel;
 use File;
 
@@ -81,6 +82,11 @@ class OrderController extends CommonController
             $user = $request->user();
             $input['user_id'] = $user->id;
             $input['type'] = $user->type;
+            $input['admin'] = false;
+            $currentUser = Auth::user();
+            if ($currentUser->hasRole('admin')) {
+                $input['admin'] = true;
+            }
             return $this->sendResponse(OrderServiceFactory::mOrderService()->comments($input), 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
