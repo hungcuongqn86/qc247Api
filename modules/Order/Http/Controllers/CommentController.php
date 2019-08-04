@@ -72,21 +72,31 @@ class CommentController extends CommonController
 
         try {
             // comment
-            $comments = OrderServiceFactory::mCommentService()->getByOrderId($input['order_id']);
+            $comments = OrderServiceFactory::mCommentService()->getWaitByOrderId($input['order_id'], $user['id']);
             foreach ($comments as $comment) {
-                if (($user['type'] == 1) && $comment['is_admin'] == 1 && $comment['is_read'] == 0) {
+                if (($user['type'] == 1) && $comment['is_admin'] == 1) {
                     $commentInput = array(
                         'id' => $comment['id'],
                         'is_read' => 1
                     );
                     OrderServiceFactory::mCommentService()->update($commentInput);
+                    $commentUserInput = array(
+                        'user_id' => $user['id'],
+                        'comment_id' => $comment['id']
+                    );
+                    OrderServiceFactory::mCommentUsersService()->create($commentUserInput);
                 }
-                if (($user['type'] == 0) && $comment['is_admin'] == 0 && $comment['is_read'] == 0) {
+                if (($user['type'] == 0) && $comment['is_admin'] == 0) {
                     $commentInput = array(
                         'id' => $comment['id'],
                         'is_read' => 1
                     );
                     OrderServiceFactory::mCommentService()->update($commentInput);
+                    $commentUserInput = array(
+                        'user_id' => $user['id'],
+                        'comment_id' => $comment['id']
+                    );
+                    OrderServiceFactory::mCommentUsersService()->create($commentUserInput);
                 }
             }
 

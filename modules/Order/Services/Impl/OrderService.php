@@ -127,7 +127,7 @@ class OrderService extends CommonService implements IOrderService
 
     public function comments($filter)
     {
-        $query = Comment::with(['Order'])->where('is_deleted', '=', 0)->where('is_read', '=', 0);
+        $query = Comment::with(['Order'])->where('is_deleted', '=', 0);
         $userid = $filter['user_id'];
         if ($filter['type'] == 1) {
             $query->whereHas('Order', function ($q) use ($userid) {
@@ -137,6 +137,9 @@ class OrderService extends CommonService implements IOrderService
         if ($filter['type'] == 0) {
             $query->where('is_admin', '=', 0);
         }
+        $query->whereDoesntHave('CommentUsers', function ($q) use ($userid) {
+            $q->where('user_id', '=', $userid);
+        });
         $query->where('user_id', '<>', $userid);
         $rResult = $query->get();
         if (!empty($rResult)) {

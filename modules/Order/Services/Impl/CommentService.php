@@ -32,6 +32,17 @@ class CommentService extends CommonService implements ICommentService
         return $rResult;
     }
 
+    public function getWaitByOrderId($orderId, $userid)
+    {
+        $query = Comment::where('is_deleted', '=', 0)->where('order_id', '=', $orderId);
+        $query->whereDoesntHave('CommentUsers', function ($q) use ($userid) {
+            $q->where('user_id', '=', $userid);
+        });
+        $query->orderBy('id', 'asc');
+        $rResult = $query->get()->toArray();
+        return $rResult;
+    }
+
     public function create($arrInput)
     {
         $history = new Comment($arrInput);
