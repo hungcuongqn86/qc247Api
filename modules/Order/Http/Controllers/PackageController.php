@@ -18,6 +18,11 @@ class PackageController extends CommonController
     {
         $input = $request->all();
         try {
+            $user = $request->user();
+            if ($user->type === 1) {
+                $input['user_id'] = $user->id;
+            }
+
             return $this->sendResponse(OrderServiceFactory::mPackageService()->search($input), 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
