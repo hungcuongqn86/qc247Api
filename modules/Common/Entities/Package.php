@@ -47,6 +47,7 @@ class Package extends BaseEntity
         $res[] = ['id' => 5, 'name' => 'Đang trên đường về VN'];
         $res[] = ['id' => 6, 'name' => 'Trong kho VN'];
         $res[] = ['id' => 7, 'name' => 'Thanh lý'];
+        $res[] = ['id' => 8, 'name' => 'Hủy'];
         return $res;
     }
 }

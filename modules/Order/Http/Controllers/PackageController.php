@@ -5,6 +5,7 @@ namespace Modules\Order\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
+use Modules\Common\Services\CommonServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
 
 class PackageController extends CommonController
@@ -170,6 +171,44 @@ class PackageController extends CommonController
 
             $update = OrderServiceFactory::mPackageService()->update($input);
             if (!empty($update)) {
+                if (sizeof($arrPk) == 1) {
+                    if ($input['status'] == 8) {
+                        $orderInput['id'] = $order['order']['id'];
+                        $orderInput['status'] = 6;
+                        $tiencoc = $order['order']['thanh_toan'];
+                        if (!empty($tiencoc) && $tiencoc > 0) {
+                            // Hoan tien
+                            $orderInput['datcoc_content'] = "Hủy mã, hoàn tiền cọc.";
+                            $orderInput['thanh_toan'] = 0;
+                            $orderInput['count_product'] = 0;
+                            $orderInput['tien_hang'] = 0;
+                            $orderInput['phi_tam_tinh'] = 0;
+                            $orderInput['tong'] = 0;
+
+                            $userId = $order['order']['user_id'];
+                            $debt = CommonServiceFactory::mTransactionService()->debt(['user_id' => $userId]);
+
+                            // Transaction
+                            $transaction = [
+                                'user_id' => $userId,
+                                'type' => 5,
+                                'code' => $order['order']['id'] . '.P' . $update['id'],
+                                'value' => $tiencoc,
+                                'debt' => $debt + $tiencoc,
+                                'content' => "Hủy mã, hoàn tiền cọc."
+                            ];
+                            CommonServiceFactory::mTransactionService()->create($transaction);
+                        }
+
+                        $history = [
+                            'user_id' => $user['id'],
+                            'order_id' => $order['order']['id'],
+                            'type' => 6,
+                            'content' => "Hủy mã, hoàn tiền cọc."
+                        ];
+                    }
+                }
+
                 if (!empty($orderInput['id'])) {
                     OrderServiceFactory::mOrderService()->update($orderInput);
                 }
