@@ -32,6 +32,11 @@ class OrderService extends CommonService implements IOrderService
                 $q->orWhere('email', 'LIKE', '%' . $sKeySearch . '%');
                 $q->orWhere('phone_number', 'LIKE', '%' . $sKeySearch . '%');
             });
+            $query->orWhereHas('Cart', function ($q) use ($sKeySearch) {
+                $q->whereHas('Shop', function ($q) use ($sKeySearch) {
+                    $q->where('name', 'LIKE', '%' . $sKeySearch . '%');
+                });
+            });
         }
 
         $iPkStatus = isset($filter['pk_status']) ? $filter['pk_status'] : 0;
