@@ -173,7 +173,12 @@ class CartController extends CommonController
                 // Shop
                 $shop = ShopServiceFactory::mShopService()->findByUrl($inputCart['shop_link']);
                 if (!$shop) {
-                    return $this->sendError('Error', 'Shop.' . $inputCart['shop_nick'] . '.NotExit');
+                    $inputShop = [
+                        'name' => $inputCart['shop_nick'],
+                        'url' => $inputCart['shop_link']
+                    ];
+                    $shop = ShopServiceFactory::mShopService()->create($inputShop);
+                    // return $this->sendError('Error', 'Shop.' . $inputCart['shop_nick'] . '.NotExit');
                 }
 
                 $inputCart['shop_id'] = $shop['id'];
