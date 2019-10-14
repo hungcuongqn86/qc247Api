@@ -6,6 +6,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/export', 'OrderController@export');
             Route::get('/count', 'OrderController@countByStatus');
             Route::get('/comments', 'OrderController@comments');
+            Route::get('/allcomments', 'OrderController@allcomments');
             Route::get('/mycount', 'OrderController@myCountByStatus');
             Route::get('/myorder', 'OrderController@myOrder');
             Route::get('/status', 'OrderController@status');

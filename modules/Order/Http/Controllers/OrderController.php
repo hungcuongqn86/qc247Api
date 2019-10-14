@@ -93,6 +93,24 @@ class OrderController extends CommonController
         }
     }
 
+    public function allcomments(Request $request)
+    {
+        $input = $request->all();
+        try {
+            $user = $request->user();
+            $input['user_id'] = $user->id;
+            $input['type'] = $user->type;
+            $input['admin'] = false;
+            $currentUser = Auth::user();
+            if ($currentUser->hasRole('admin')) {
+                $input['admin'] = true;
+            }
+            return $this->sendResponse(OrderServiceFactory::mOrderService()->allcomments($input), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
     public function myOrder(Request $request)
     {
         $input = $request->all();

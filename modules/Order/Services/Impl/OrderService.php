@@ -132,7 +132,7 @@ class OrderService extends CommonService implements IOrderService
 
     public function comments($filter)
     {
-        $query = Comment::with(['Order'])->where('is_deleted', '=', 0)->where('old', '=', 0);
+        $query = Comment::with(['Order'])->where('is_deleted', '=', 0);
         $userid = $filter['user_id'];
         if ($filter['type'] == 1) {
             $query->whereHas('Order', function ($q) use ($userid) {
@@ -146,6 +146,38 @@ class OrderService extends CommonService implements IOrderService
             $q->where('user_id', '=', $userid);
         });
         $query->where('user_id', '<>', $userid);
+        $rResult = $query->get();
+        if (!empty($rResult)) {
+            return $rResult;
+        } else {
+            return null;
+        }
+    }
+
+    public function allcomments($filter)
+    {
+        $userid = $filter['user_id'];
+
+        $query = Comment::with(['Order'])->with(array('CommentUsers' => function ($q) use ($userid) {
+            $q->where('user_id', '=', $userid);
+        }))->where('is_deleted', '=', 0);
+
+        $query->where('user_id', '<>', $userid);
+
+        if ($filter['type'] == 1) {
+            $query->whereHas('Order', function ($q) use ($userid) {
+                $q->where('status', '<', 5);
+                $q->where('user_id', '=', $userid);
+            });
+        } else {
+            $query->whereHas('Order', function ($q) use ($userid) {
+                $q->where('status', '<', 5);
+            });
+            if (!$filter['admin']) {
+                $query->where('is_admin', '=', 0);
+            }
+        }
+
         $rResult = $query->get();
         if (!empty($rResult)) {
             return $rResult;
