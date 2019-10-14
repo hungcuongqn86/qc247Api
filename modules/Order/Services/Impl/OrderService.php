@@ -177,7 +177,7 @@ class OrderService extends CommonService implements IOrderService
                 $query->where('is_admin', '=', 0);
             }
         }
-
+        $query->orderBy('created_at', 'desc')->limit(500);
         $rResult = $query->get();
         if (!empty($rResult)) {
             return $rResult;
