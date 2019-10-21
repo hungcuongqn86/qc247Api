@@ -142,7 +142,7 @@ class CartController extends CommonController
         $input = $request->all();
         try {
             $inputData = self::json_decode_nice($input['cart']);
-            foreach ($inputData as $item) {
+            foreach ((array)$inputData as $item) {
                 $inputCart = (array)$item;
                 $arrRules = [
                     'amount' => 'required',
@@ -198,8 +198,8 @@ class CartController extends CommonController
     private function json_decode_nice($json, $assoc = FALSE)
     {
         $json = str_replace(array("\n", "\r"), "", $json);
-        $json = preg_replace('/([{,]+)(\s*)([^"]+?)\s*:/', '$1"$3":', $json);
-        $json = preg_replace('/(,)\s*}$/', '}', $json);
+        //$json = preg_replace('/([{,]+)(\s*)([^"]+?)\s*:/', '$1"$3":', $json);
+        //$json = preg_replace('/(,)\s*}$/', '}', $json);
         return json_decode($json, $assoc);
     }
 
