@@ -82,11 +82,11 @@ class PackageService extends CommonService implements IPackageService
     public function waitMoveOut($filter)
     {
         $query = User::with(array('Order' => function ($query) {
-            $query->where('is_deleted', '=', 0)->orderBy('id');
             $query->whereHas('Package', function ($q) {
-                $q->where('is_deleted', '=', 0);
                 $q->where('status', '=', 6);
+                $q->where('is_deleted', '=', 0);
             });
+            $query->where('is_deleted', '=', 0)->orderBy('id');
             $query->with(array('Package' => function ($query) {
                 $query->where('status', '=', 6);
                 $query->whereNull('bill_id');
