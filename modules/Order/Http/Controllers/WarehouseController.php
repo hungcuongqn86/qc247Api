@@ -189,22 +189,25 @@ class WarehouseController extends CommonController
                     if (!empty($pkupdate)) {
                         //Thanh ly order
                         $order = OrderServiceFactory::mOrderService()->findById($pkupdate['order_id']);
-                        $tongTien = $order['order']['tong'];
                         $arrPk = $order['order']['package'];
-                        $tigia = $order['order']['rate'];
-                        foreach ($arrPk as $pk) {
-                            if ($pk['ship_khach'] && $pk['ship_khach'] > 0) {
-                                $ndt = $pk['ship_khach'];
-                                $vnd = $ndt * $tigia;
-                                $tongTien = $tongTien + $vnd;
+                        if ((!empty($arrPk)) && ($arrPk[0]['id'] == $pkupdate['id'])) {
+                            $tongTien = $order['order']['tong'];
+                            $tigia = $order['order']['rate'];
+                            foreach ($arrPk as $pk) {
+                                if ($pk['ship_khach'] && $pk['ship_khach'] > 0) {
+                                    $ndt = $pk['ship_khach'];
+                                    $vnd = $ndt * $tigia;
+                                    $tongTien = $tongTien + $vnd;
+                                }
                             }
-                        }
 
-                        $orderInput = array();
-                        $orderInput['id'] = $order['order']['id'];
-                        $orderInput['status'] = 5;
-                        $orderInput['thanh_toan'] = $tongTien;
-                        OrderServiceFactory::mOrderService()->update($orderInput);
+                            $orderInput = array();
+                            $orderInput['id'] = $order['order']['id'];
+                            $orderInput['status'] = 5;
+                            $orderInput['thanh_toan'] = $tongTien;
+                            OrderServiceFactory::mOrderService()->update($orderInput);
+                            // dd($orderInput);
+                        }
                     }
                 }
 
