@@ -145,6 +145,7 @@ class WarehouseController extends CommonController
     public function billConfirm(Request $request)
     {
         $input = $request->all();
+        $user = $request->user();
         $arrRules = [
             'id' => 'required',
         ];
@@ -207,6 +208,14 @@ class WarehouseController extends CommonController
                             $orderInput['thanh_toan'] = $tongTien;
                             OrderServiceFactory::mOrderService()->update($orderInput);
                             // dd($orderInput);
+                            // add history
+                            $history = [
+                                'user_id' => $user['id'],
+                                'order_id' => $order['order']['id'],
+                                'type' => 9,
+                                'content' => 'Xuất kho thanh lý, mã phiếu ' . $update['id']
+                            ];
+                            OrderServiceFactory::mHistoryService()->create($history);
                         }
                     }
                 }
