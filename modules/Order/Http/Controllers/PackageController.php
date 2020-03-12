@@ -5,6 +5,7 @@ namespace Modules\Order\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
+use Modules\Cart\Services\CartServiceFactory;
 use Modules\Common\Services\CommonServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
 
@@ -198,6 +199,9 @@ class PackageController extends CommonController
                                 'content' => "Hủy mã, hoàn tiền cọc."
                             ];
                             CommonServiceFactory::mTransactionService()->create($transaction);
+
+                            // update card
+                            CartServiceFactory::mCartService()->cancelOrder($order['order']['id']);
                         }
 
                         $history = [

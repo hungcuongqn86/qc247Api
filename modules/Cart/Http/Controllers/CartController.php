@@ -86,11 +86,13 @@ class CartController extends CommonController
                     $tien_hang_old = $order['tien_hang'];
                     $phi_tt_old = $order['phi_tam_tinh'];
                     $tien_hang = 0;
+                    $count_product = 0;
                     foreach ($arrCarts as $cartItem) {
                         $price = self::convertPrice($cartItem['price']);
                         $rate = $cartItem['rate'];
                         $amount = $cartItem['amount'];
                         $tien_hang = $tien_hang + round($price * $rate * $amount);
+                        $count_product = $count_product + $cartItem['amount'];
                     }
                     if ($tien_hang_old > 0) {
                         $phi_tt = round(($tien_hang * $phi_tt_old) / $tien_hang_old);
@@ -108,6 +110,7 @@ class CartController extends CommonController
                     $orderInput['tien_hang'] = $tien_hang;
                     $orderInput['phi_tam_tinh'] = $phi_tt;
                     $orderInput['tong'] = $tien_hang + $phi_tt;
+                    $orderInput['count_product'] = $count_product;
                     OrderServiceFactory::mOrderService()->update($orderInput);
                 }
 
