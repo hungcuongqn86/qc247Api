@@ -172,8 +172,10 @@ class PackageController extends CommonController
 
             $update = OrderServiceFactory::mPackageService()->update($input);
             if (!empty($update)) {
-                if (sizeof($arrPk) == 1) {
-                    if ($input['status'] == 8) {
+                if ($input['status'] == 8) {
+                    // Check huy
+                    $check = OrderServiceFactory::mOrderService()->checkCancel($order['order']['id']);
+                    if ($check) {
                         $orderInput['id'] = $order['order']['id'];
                         $orderInput['status'] = 6;
                         $tiencoc = $order['order']['thanh_toan'];

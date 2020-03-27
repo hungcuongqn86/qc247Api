@@ -260,4 +260,19 @@ class OrderService extends CommonService implements IOrderService
             throw $e;
         }
     }
+
+    public function checkCancel($id)
+    {
+        $query = Order::where('id', '=', $id)->where('is_deleted', '=', 0);
+        $query->whereDoesntHave('Package', function ($q) {
+            $q->where('status', '<>', 8);
+        });
+
+        $rResult = $query->first();
+        if (!empty($rResult)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
