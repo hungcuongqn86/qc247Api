@@ -41,17 +41,26 @@ class OrderService extends CommonService implements IOrderService
 
         $iPkStatus = isset($filter['pk_status']) ? $filter['pk_status'] : 0;
         $package_code = isset($filter['package_code']) ? trim($filter['package_code']) : '';
-        if (!empty($package_code)) {
+        $contract_code = isset($filter['contract_code']) ? trim($filter['contract_code']) : '';
+        if (!empty($package_code) || !empty($contract_code)) {
             if ($package_code === '#') {
-                $query->whereHas('Package', function ($q) use ($package_code, $iPkStatus) {
+                $query->whereHas('Package', function ($q) use ($package_code, $contract_code, $iPkStatus) {
                     $q->whereNull('package_code');
+                    if(!empty($contract_code)){
+                        $q->where('contract_code', '=', $contract_code);
+                    }
                     if ($iPkStatus > 0) {
                         $q->where('status', '=', $iPkStatus);
                     }
                 });
             } else {
-                $query->whereHas('Package', function ($q) use ($package_code, $iPkStatus) {
-                    $q->where('package_code', '=', $package_code);
+                $query->whereHas('Package', function ($q) use ($package_code, $contract_code, $iPkStatus) {
+                    if(!empty($package_code)){
+                        $q->where('package_code', '=', $package_code);
+                    }
+                    if(!empty($contract_code)){
+                        $q->where('contract_code', '=', $contract_code);
+                    }
                     if ($iPkStatus > 0) {
                         $q->where('status', '=', $iPkStatus);
                     }
@@ -64,6 +73,7 @@ class OrderService extends CommonService implements IOrderService
                 });
             }
         }
+
         $code = isset($filter['code']) ? trim($filter['code']) : '';
         if (!empty($code)) {
             $query->where('id', '=', $code);
