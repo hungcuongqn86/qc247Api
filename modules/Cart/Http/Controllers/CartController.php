@@ -150,11 +150,16 @@ class CartController extends CommonController
             //Check rate
             $user = $request->user();
             $rate = 0;
-            if (!empty($user) && $user->rate) {
-                $rate = (int)$user->rate;
-            }else{
-                $setting = CommonServiceFactory::mSettingService()->findByKey('rate');
-                $rate = (int)$setting['setting']['value'];
+            if (!empty($user)) {
+                $userData = CommonServiceFactory::mUserService()->findById($user->id);
+                if (!empty($userData) && !empty($userData['user']) && !empty($userData['user']['rate'])) {
+                    $rate = (int)$userData['user']['rate'];
+                } else {
+                    $setting = CommonServiceFactory::mSettingService()->findByKey('rate');
+                    $rate = (int)$setting['setting']['value'];
+                }
+            } else {
+                return $this->sendError('Error', ['Auth'], 401);
             }
 
             foreach ((array)$inputData as $item) {
