@@ -4,6 +4,7 @@ namespace Modules\Cart\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Modules\Common\Services\CommonServiceFactory;
 use Modules\Cart\Services\CartServiceFactory;
 use Modules\Shop\Services\ShopServiceFactory;
 use Modules\Order\Services\OrderServiceFactory;
@@ -145,8 +146,20 @@ class CartController extends CommonController
         $input = $request->all();
         try {
             $inputData = self::json_decode_nice($input['cart']);
+
+            //Check rate
+            $user = $request->user();
+            $rate = 0;
+            if (!empty($user) && $user->rate) {
+                $rate = (int)$user->rate;
+            }else{
+                $setting = CommonServiceFactory::mSettingService()->findByKey('rate');
+                $rate = (int)$setting['setting']['value'];
+            }
+
             foreach ((array)$inputData as $item) {
                 $inputCart = (array)$item;
+                $inputCart['rate'] = $rate;
                 $arrRules = [
                     'amount' => 'required',
                     'domain' => 'required',
@@ -185,7 +198,6 @@ class CartController extends CommonController
                 }
 
                 $inputCart['shop_id'] = $shop['id'];
-                $user = $request->user();
                 $inputCart['user_id'] = $user->id;
                 $inputCart['price'] = self::convertPrice($inputCart['price']);
                 $inputCart['price_arr'] = json_encode($inputCart['price_arr']);
