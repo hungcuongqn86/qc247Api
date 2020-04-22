@@ -8,9 +8,16 @@ use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Services\CommonServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Auth;
+use Kreait\Firebase\Database;
 
 class CommentController extends CommonController
 {
+	private $database;
+	public function __construct(Database $database)
+    {
+        $this->database = $database;
+    }
+	
     public function index()
     {
         return $this->sendResponse([], 'Successfully.');
@@ -136,8 +143,24 @@ class CommentController extends CommonController
             if (empty($order)) {
                 return $this->sendError('Error', ['Đơn hàng không tồn tại!']);
             }
-
             $create = OrderServiceFactory::mCommentService()->create($input);
+			
+			if(!empty($create)){
+				$reference = 'dathangqc0/comment';
+				$data = [
+					"id" => $create->id,
+					"user_id" => $create->user_id,
+					"order_id" => $create->order_id,
+					"content" => $create->content,
+					"is_admin" => $create->is_admin,
+					"created_at" => $create->created_at,
+					"updated_at" => $create->updated_at,
+					"updated_at" => $create->updated_at,
+					"viewers" => []
+				];
+				
+				$newKey = $this->database->getReference($reference)->push($data)->getKey();
+			}
             return $this->sendResponse($create, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());

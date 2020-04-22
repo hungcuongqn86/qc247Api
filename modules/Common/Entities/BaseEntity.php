@@ -8,7 +8,7 @@ class BaseEntity extends Model
 {
     public function __construct($attributes = [])
     {
-        // parent::__construct($attributes);
+        parent::__construct($attributes);
     }
 
     public static function getTableName()
@@ -18,6 +18,7 @@ class BaseEntity extends Model
 
     protected static function boot()
     {
+		parent::boot();
         static::saving(function ($model) {
             if ($model->id != null && $model->id != 0) {
                 $model->updated_at = date('Y-m-d H:i:s');
