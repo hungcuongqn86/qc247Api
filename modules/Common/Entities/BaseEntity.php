@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseEntity extends Model
 {
+    public function __construct($attributes = [])
+    {
+        // parent::__construct($attributes);
+    }
+
     public static function getTableName()
     {
         return with(new static)->getTable();
