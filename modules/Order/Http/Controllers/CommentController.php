@@ -147,23 +147,18 @@ class CommentController extends CommonController
 			
 			if(!empty($create)){
 				$data = [
-					"id" => $create->id,
-					"user_id" => $create->user_id,
 					"order_id" => $create->order_id,
 					"content" => $create->content,
-					"is_admin" => $create->is_admin,
-					"created_at" => $create->created_at,
-					"updated_at" => $create->updated_at,
-					"is_read" => 0
+					"created_at" => $create->created_at
 				];
 				
+				$update = [];
 				if($create->is_admin){
 					$users = CommonServiceFactory::mUserService()->usersGetAll([]);
 					foreach($users as $userItem){
 						if(($userItem->id != $create->user_id) && ($userItem->id != 1)){
 							if(($userItem->id == $order['order']['user_id']) || ($userItem->hasRole('admin'))){
-								$referenceRoot = 'dathangqc0/comment/'.$userItem->id;
-								$this->database->getReference($referenceRoot)->push($data)->getKey();
+								$update['dathangqc0/comment/'.$userItem->id.'/'.$create->id] = $data;
 							}
 						}
 					}
@@ -171,11 +166,12 @@ class CommentController extends CommonController
 					$users = CommonServiceFactory::mUserService()->usersGetAll(["type"=>0]);
 					foreach($users as $userItem){
 						if($userItem->id != 1){
-							$referenceRoot = 'dathangqc0/comment/'.$userItem->id;
-							$this->database->getReference($referenceRoot)->push($data)->getKey();
+							$update['dathangqc0/comment/'.$userItem->id.'/'.$create->id] = $data;
 						}
 					}
 				}
+				
+				$this->database->getReference()->update($update);
 			}
             return $this->sendResponse($create, 'Successfully.');
         } catch (\Exception $e) {
