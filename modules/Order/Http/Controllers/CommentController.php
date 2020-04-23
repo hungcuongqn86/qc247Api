@@ -83,6 +83,7 @@ class CommentController extends CommonController
         try {
             // comment
             $comments = OrderServiceFactory::mCommentService()->getWaitByOrderId($input['order_id'], $user['id']);
+			$update = [];
             foreach ($comments as $comment) {
                 if (($user['type'] == 1) && $comment['is_admin'] == 1) {
                     $commentInput = array(
@@ -110,7 +111,12 @@ class CommentController extends CommonController
                         OrderServiceFactory::mCommentUsersService()->create($commentUserInput);
                     }
                 }
+				
+				$update['dathangqc0/comment/'.$user['id'].'/'.$comment['id']] = [];
             }
+			if(!empty($update)){
+				$this->database->getReference()->update($update);
+			}
 
             return $this->sendResponse($comments, 'Successfully.');
         } catch (\Exception $e) {
@@ -171,7 +177,9 @@ class CommentController extends CommonController
 					}
 				}
 				
-				$this->database->getReference()->update($update);
+				if(!empty($update)){
+					$this->database->getReference()->update($update);
+				}
 			}
             return $this->sendResponse($create, 'Successfully.');
         } catch (\Exception $e) {
