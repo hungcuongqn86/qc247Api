@@ -112,7 +112,8 @@ class CommentController extends CommonController
                     }
                 }
 				
-				$update['dathangqc0/comment/'.$user['id'].'/'.$comment['id']] = [];
+				$refer = config('app.name').'/comment/'.$user['id'].'/'.$comment['id'];
+				$update[$refer] = [];
             }
 			if(!empty($update)){
 				$this->database->getReference()->update($update);
@@ -164,7 +165,8 @@ class CommentController extends CommonController
 					foreach($users as $userItem){
 						if(($userItem->id != $create->user_id) && ($userItem->id != 1)){
 							if(($userItem->id == $order['order']['user_id']) || ($userItem->hasRole('admin'))){
-								$update['dathangqc0/comment/'.$userItem->id.'/'.$create->id] = $data;
+								$refer = config('app.name').'/comment/'.$userItem->id.'/'.$create->id;
+								$update[$refer] = $data;
 							}
 						}
 					}
@@ -172,7 +174,8 @@ class CommentController extends CommonController
 					$users = CommonServiceFactory::mUserService()->usersGetAll(["type"=>0]);
 					foreach($users as $userItem){
 						if($userItem->id != 1){
-							$update['dathangqc0/comment/'.$userItem->id.'/'.$create->id] = $data;
+							$refer = config('app.name').'/comment/'.$userItem->id.'/'.$create->id;
+							$update[$refer] = $data;
 						}
 					}
 				}
