@@ -77,13 +77,11 @@ class ShippingController extends CommonController
     {
         $input = $request->all();
         $arrRules = [
-            'type' => 'required',
-            'money_request' => 'required',
+            'package_count' => 'required',
             'content' => 'required'
         ];
         $arrMessages = [
-            'type.required' => 'type.required',
-            'money_request.required' => 'money_request.required',
+            'package_count.required' => 'package_count.required',
             'content.required' => 'content.required'
         ];
 
@@ -93,7 +91,7 @@ class ShippingController extends CommonController
         }
 
         try {
-            $update = OrderServiceFactory::mComplainService()->update($input);
+            $update = OrderServiceFactory::mShippingService()->update($input);
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
