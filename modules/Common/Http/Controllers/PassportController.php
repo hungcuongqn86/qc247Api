@@ -198,6 +198,12 @@ class PassportController extends CommonController
             $newobj->url = '/cart';
             $newobj->icon = 'fa fa-cart-plus';
             $nav[] = $newobj;
+			
+			$newobj = new \stdClass();
+            $newobj->name = 'Yêu cầu ký gửi';
+            $newobj->url = '/shipping';
+            $newobj->icon = 'fa fa-truck';
+            $nav[] = $newobj;
         }
 
         if ($user->hasPermissionTo('mcustumer')) {
