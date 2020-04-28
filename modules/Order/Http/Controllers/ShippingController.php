@@ -127,4 +127,43 @@ class ShippingController extends CommonController
             return $this->sendError('Error', $e->getMessage());
         }
     }
+	
+    public function approve(Request $request)
+    {
+        $input = $request->all();
+        $arrRules = [
+            'id' => 'required',
+            'status' => 'required',
+        ];
+        $arrMessages = [
+            'id.required' => 'id.required',
+            'status.required' => 'status.required',
+        ];
+
+        $validator = Validator::make($input, $arrRules, $arrMessages);
+        if ($validator->fails()) {
+            return $this->sendError('Error', $validator->errors()->all());
+        }
+
+		$user = $request->user();
+		if ($user['type'] == 1) {
+			return $this->sendError('Error', ['Không có quyền truy cập!'], 403);
+		}
+		
+		$shipping = OrderServiceFactory::mShippingService()->findById($input['id']);
+		if(empty($shipping)){
+			return $this->sendError('Error', ['Không tồn tại yêu cầu ký gửi!']);
+		}
+
+        try {
+            $update = OrderServiceFactory::mShippingService()->update($input);
+			if((!empty($update)) && ($input['status'] == '2')){
+				// Tao don hang
+				
+			}
+            return $this->sendResponse($update, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
 }
