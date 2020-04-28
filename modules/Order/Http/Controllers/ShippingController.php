@@ -24,6 +24,18 @@ class ShippingController extends CommonController
             return $this->sendError('Error', $e->getMessage());
         }
     }
+	
+    public function myshipping(Request $request)
+    {
+        $input = $request->all();
+        try {
+			$user = $request->user();
+            $input['user_id'] = $user->id;
+            return $this->sendResponse(OrderServiceFactory::mShippingService()->search($input), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
 
     public function getByOrder(Request $request)
     {

@@ -21,9 +21,34 @@ class ShippingService extends CommonService implements IShippingService
 
     public function search($filter)
     {
-        $query = Shipping::with(array('Order' => function ($query) {
-            $query->with(['User'])->orderBy('id');
-        }))->where('is_deleted', '=', 0);
+        $query = Shipping::with(['User', 'Order'])->where('is_deleted', '=', 0);
+		$iUser = isset($filter['user_id']) ? $filter['user_id'] : '';
+		if (!empty($iUser)) {
+			$query->where('user_id', '=', $iUser);
+		}
+		
+		$iCode = isset($filter['code']) ? $filter['code'] : '';
+		if (!empty($iCode)) {
+			$query->where('id', '=', $iCode);
+		}
+		
+		$iStatus = isset($filter['status']) ? $filter['status'] : '';
+		if (!empty($iStatus)) {
+			$query->where('status', '=', $iStatus);
+		}
+		
+		$sKeySearch = isset($filter['key']) ? $filter['key'] : '';
+        if (!empty($sKeySearch)) {
+			$query->where(function ($q) use ($sKeySearch){
+				$q->whereHas('User', function ($q) use ($sKeySearch) {
+					$q->where('name', 'LIKE', '%' . $sKeySearch . '%');
+					$q->orWhere('email', 'LIKE', '%' . $sKeySearch . '%');
+					$q->orWhere('phone_number', 'LIKE', '%' . $sKeySearch . '%');
+				});
+				$q->orWhere('content', 'LIKE', '%' . $sKeySearch . '%');
+			});
+        }
+		
         $query->orderBy('id', 'desc');
         $limit = isset($filter['limit']) ? $filter['limit'] : config('const.LIMIT_PER_PAGE');
         $rResult = $query->paginate($limit)->toArray();

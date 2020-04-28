@@ -2,6 +2,7 @@
 
 namespace Modules\Common\Entities;
 
+use App\User;
 use Illuminate\Notifications\Notifiable;
 
 class Shipping extends BaseEntity
@@ -40,6 +41,11 @@ class Shipping extends BaseEntity
     public function Order()
     {
         return $this->hasMany(Order::class, 'id', 'order_id');
+    }
+	
+	public function User()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 	
 	public $list_of_status = [

@@ -201,7 +201,7 @@ class PassportController extends CommonController
 			
 			$newobj = new \stdClass();
             $newobj->name = 'Yêu cầu ký gửi';
-            $newobj->url = '/shipping';
+            $newobj->url = '/shipping/myshipping';
             $newobj->icon = 'fa fa-truck';
             $nav[] = $newobj;
         }
