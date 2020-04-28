@@ -18,6 +18,16 @@ class UserService extends CommonService implements IUserService
     {
         // return User::class;
     }
+	
+	public function usersGetAll($filter)
+    {
+        $query = User::with(['roles'])->where('is_deleted', '=', 0);
+		if(isset($filter['type'])){
+			$query->where('type', '=', $filter['type']);
+		}
+        $rResult = $query->get();
+        return $rResult;
+    }
 
     /**
      * @param $filter

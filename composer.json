@@ -6,17 +6,15 @@
     "type": "project",
     "require": {
         "php": ">=7.0.0",
-        "darkaonline/l5-swagger": "5.5.*",
         "doctrine/dbal": "^2.5",
-        "fideloper/proxy": "~3.3",
-        "laravel/framework": "5.5.*",
+        "fideloper/proxy": "~4.0",
+        "kreait/laravel-firebase": "^2.0",
+        "laravel/framework": "5.8.*",
         "laravel/passport": "4.0.*",
         "laravel/tinker": "~1.0",
-        "maatwebsite/excel": "~2.1.0",
-        "nwidart/laravel-modules": "^2.7",
+        "nwidart/laravel-modules": "^5.0",
         "paragonie/random_compat": "2.*",
-        "spatie/laravel-permission": "^2.36",
-        "zircote/swagger-php": "2.*"
+        "spatie/laravel-permission": "^2.36"
     },
     "require-dev": {
         "filp/whoops": "~2.0",

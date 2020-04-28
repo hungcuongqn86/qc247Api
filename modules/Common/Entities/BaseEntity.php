@@ -6,11 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseEntity extends Model
 {
-    /**
-     * @var bool
-     */
-    public $skip = false;
-
     public function __construct($attributes = [])
     {
         parent::__construct($attributes);
@@ -23,11 +18,8 @@ class BaseEntity extends Model
 
     protected static function boot()
     {
+		parent::boot();
         static::saving(function ($model) {
-            if ($model->skip) {
-                return true;
-            }
-
             if ($model->id != null && $model->id != 0) {
                 $model->updated_at = date('Y-m-d H:i:s');
             } else {
@@ -35,15 +27,7 @@ class BaseEntity extends Model
                 $model->created_at = date('Y-m-d H:i:s');
                 $model->updated_at = date('Y-m-d H:i:s');
             }
-
-            if($model->getTable()==='spt_sim'){
-                if(!empty($model->sim_number_standard)){
-                    $model->yinyang = get_yinyang($model->sim_number_standard);
-                    $model->phase = get_phase($model->sim_number_standard);
-                    $model->scores = get_scores($model->sim_number_standard);
-                }
-            }
-
+			
             return true;
         });
 

@@ -139,14 +139,16 @@ class UserController extends CommonController
 
             $update = CommonServiceFactory::mUserService()->update($input);
             if ($update) {
-                $role = CommonServiceFactory::mRoleService()->findById($input['role_id']);
-                if ($role) {
-                    $roles = $update->getRoleNames();
-                    foreach ($roles as $item) {
-                        $update->removeRole($item);
-                    }
-                    $update->assignRole($role['role']['name']);
-                }
+				if(isset($input['role_id'])){
+					$role = CommonServiceFactory::mRoleService()->findById($input['role_id']);
+					if ($role) {
+						$roles = $update->getRoleNames();
+						foreach ($roles as $item) {
+							$update->removeRole($item);
+						}
+						$update->assignRole($role['role']['name']);
+					}
+				}
             }
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {

@@ -1,16 +1,6 @@
 <?php
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-Route::get('/', function () {
-    return view('welcome');
+// exit;
+Route::group(['prefix' => 'maintainer', 'namespace' => 'Modules\Order\Http\Controllers'], function () {
+	// Route::get('/order/status/count', 'CommentController@maintainerStatusCount');
+	// Route::get('/order/comment/count', 'CommentController@maintainerCommentCount');
 });
