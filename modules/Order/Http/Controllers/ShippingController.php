@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Services\CommonServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
+use Illuminate\Support\Facades\DB;
 
 class ShippingController extends CommonController
 {
@@ -156,13 +157,49 @@ class ShippingController extends CommonController
 		}
 
         try {
+			DB::beginTransaction();
+			$input['approve_id'] = $user['id'];
+			$input['approve_at'] = date('Y-m-d H:i:s');
             $update = OrderServiceFactory::mShippingService()->update($input);
 			if((!empty($update)) && ($input['status'] == '2')){
 				// Tao don hang
+				$orderInput = Array(
+					'user_id' => $update->user_id,
+					'shop_id' => 1,
+					'status' => 4,
+					'rate' => 1,
+					'count_product' => 0,
+					'count_link' => 0,
+					'tien_hang' => 0,
+					'phi_tam_tinh' => 0,
+					'tong' => 0,
+					'thanh_toan' => 0,
+					'con_thieu' => 0,
+					'shipping' => 1,
+				);
+				$order = OrderServiceFactory::mOrderService()->create($orderInput);
+				if (!empty($order)) {
+					// History
+					$history = [
+						'user_id' => $user['id'],
+						'order_id' => $order['id'],
+						'type' => 10
+					];
+					OrderServiceFactory::mHistoryService()->create($history);
+					//Package
+					$package = [
+						'order_id' => $order['id']
+					];
+					OrderServiceFactory::mPackageService()->create($package);
+				}
 				
+				$update->order_id = $order['id'];
+				$update->save();
 			}
+			DB::commit();
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
+			DB::rollBack();
             return $this->sendError('Error', $e->getMessage());
         }
     }
