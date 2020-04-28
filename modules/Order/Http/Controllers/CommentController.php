@@ -10,6 +10,8 @@ use Modules\Common\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Auth;
 use Kreait\Firebase\Database;
 
+use Modules\Common\Entities\Comment;
+
 class CommentController extends CommonController
 {
 	private $database;
@@ -189,4 +191,56 @@ class CommentController extends CommonController
             return $this->sendError('Error', $e->getMessage());
         }
     }
+	
+	public function maintainerStatusCount(Request $request)
+    {
+		dd('Start');
+		$users = CommonServiceFactory::mUserService()->usersGetAll(["type"=>1]);
+		foreach($users as $user){
+			$userid = $user->id;
+			$arrCountOrder = OrderServiceFactory::mOrderService()->myCountByStatus($userid);
+			if(sizeof($arrCountOrder) > 0){
+				$refer = config('app.name').'/mycount/'.$userid;
+				$data = $arrCountOrder->toArray();
+				$this->database->getReference($refer)->set($data);
+			}
+		}
+		dd('End');
+	}
+	
+	public function maintainerCommentCount(Request $request)
+    {
+		dd('Start');
+		$users = CommonServiceFactory::mUserService()->usersGetAll(["type"=>0]);
+		$update = [];
+		foreach($users as $user){
+			$userid = $user->id;
+			if($userid > 1){
+				$query = Comment::where('is_deleted', '=', 0);
+				$query->where('is_admin', '=', 0);
+				$query->where('user_id', '<>', $userid);
+				$query->whereDoesntHave('CommentUsers', function ($q) use ($userid) {
+					$q->where('user_id', '=', $userid);
+				});
+				$query->whereHas('Order', function ($q) {
+					$q->where('status', '<', 5);
+				});
+				$comments = $query->get();
+				if(sizeof($comments) > 0){
+					foreach($comments as $commnet){
+						$data = [
+							"order_id" => $commnet->order_id,
+							"content" => $commnet->content,
+							"created_at" => $commnet->created_at
+						];
+						$refer = config('app.name').'/comment/'.$userid.'/'.$commnet->id;
+						$update[$refer] = $data;
+					}
+				}
+			}
+		}
+		$this->database->getReference()->update($update);
+		// dd($update);
+		dd('End');
+	}
 }
