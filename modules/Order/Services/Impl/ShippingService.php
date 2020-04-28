@@ -54,6 +54,22 @@ class ShippingService extends CommonService implements IShippingService
         $rResult = $query->paginate($limit)->toArray();
         return $rResult;
     }
+	
+	public function status()
+    {
+        $shipping = new Shipping();
+        return $shipping->status();
+    }
+	
+	public function countByStatus()
+    {
+        $rResult = Shipping::where('is_deleted', '=', 0)->groupBy('status')->selectRaw('status, count(*) as total')->get();
+        if (!empty($rResult)) {
+            return $rResult;
+        } else {
+            return null;
+        }
+    }
 
     public function getByOrder($filter)
     {

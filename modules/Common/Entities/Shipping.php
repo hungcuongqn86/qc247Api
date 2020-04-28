@@ -10,8 +10,8 @@ class Shipping extends BaseEntity
     use Notifiable;
 	
 	const CHO_DUYET = 1;
-    const KHONG_DUYET = 2;
-    const DA_DUYET = 3;
+    const DA_DUYET = 2;
+	const KHONG_DUYET = 3;
 
     protected $table = 'shipping';
     protected $primaryKey = 'id';
@@ -50,7 +50,16 @@ class Shipping extends BaseEntity
 	
 	public $list_of_status = [
         self::CHO_DUYET => "Chờ xác nhận",
-        self::KHONG_DUYET => "Từ chối",
-        self::DA_DUYET => "Đã nhận"
+        self::DA_DUYET => "Đã nhận",
+		self::KHONG_DUYET => "Từ chối"
     ];
+	
+	public function status()
+    {
+        $res = [];
+		foreach($this->list_of_status as $key => $item){
+			$res[] = ['id' => $key, 'name' => $item];
+		}
+        return $res;
+    }
 }

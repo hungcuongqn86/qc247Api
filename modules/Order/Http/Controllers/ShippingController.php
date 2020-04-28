@@ -36,6 +36,24 @@ class ShippingController extends CommonController
             return $this->sendError('Error', $e->getMessage());
         }
     }
+	
+	public function status()
+    {
+        try {
+            return $this->sendResponse(OrderServiceFactory::mShippingService()->status(), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+	
+	public function countByStatus(Request $request)
+    {
+        try {
+            return $this->sendResponse(OrderServiceFactory::mShippingService()->countByStatus(), 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
 
     public function getByOrder(Request $request)
     {
