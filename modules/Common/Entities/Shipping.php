@@ -49,7 +49,7 @@ class Shipping extends BaseEntity
     }
 	
 	public $list_of_status = [
-        self::CHO_DUYET => "Chờ xác nhận",
+        self::CHO_DUYET => "Chờ nhận",
         self::DA_DUYET => "Đã nhận",
 		self::KHONG_DUYET => "Từ chối"
     ];
