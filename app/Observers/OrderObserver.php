@@ -20,10 +20,10 @@ class OrderObserver
 			$userid = $order->user_id;
 			$rResult1 = Order::where('is_deleted', '=', 0)->where('user_id', '=', $userid)->groupBy('status')->selectRaw('status, count(*) as total, "od" as type')->get();
 			
-			$rResult2 = Package::where('is_deleted', '=', 0)->whereHas('Order', function ($q) use ($userId) {
-				$q->where('user_id', '=', $userId);
+			$rResult2 = Package::where('is_deleted', '=', 0)->whereHas('Order', function ($q) use ($userid) {
+				$q->where('user_id', '=', $userid);
 				$q->where('is_deleted', '=', 0);
-			})->groupBy('status')->selectRaw('status, count(*) as total, , "pk" as type')->get();
+			})->groupBy('status')->selectRaw('status, count(*) as total, "pk" as type')->get();
 			
 			$refer = config('app.name').'/mycount/'.$userid;
 			
