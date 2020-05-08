@@ -17,13 +17,26 @@ class OrderObserver
     {
 		if($order->isDirty('status') || $order->isDirty('is_deleted')){
 			$userid = $order->user_id;
-			$rResult = Order::where('is_deleted', '=', 0)->where('user_id', '=', $userid)->groupBy('status')->selectRaw('status, count(*) as total, "od" as type')->get();
+			$rResult1 = Order::where('is_deleted', '=', 0)->where('user_id', '=', $userid)->groupBy('status')->selectRaw('status, count(*) as total, "od" as type')->get();
+			
+			$rResult2 = Package::where('is_deleted', '=', 0)->whereHas('Order', function ($q) use ($userId) {
+				$q->where('user_id', '=', $userId);
+				$q->where('is_deleted', '=', 0);
+			})->groupBy('status')->selectRaw('status, count(*) as total, , "pk" as type')->get();
 			
 			$refer = config('app.name').'/mycount/'.$userid;
-			$data = [];
-			if (!empty($rResult)) {
-				$data = $rResult->toArray();
+			
+			$data1 = [];
+			$data2 = [];
+			if (!empty($rResult1)) {
+				$data1 = $rResult1->toArray();
 			}
+			
+			if (!empty($rResult2)) {
+				$data2 = $rResult2->toArray();
+			}
+			
+			$data = array_merge($data1, $data2);
 			$this->database->getReference($refer)->set($data);
 		}
     }
