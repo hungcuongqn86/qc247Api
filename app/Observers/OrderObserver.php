@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use Modules\Common\Entities\Order;
+use Modules\Common\Entities\Package;
 use Kreait\Firebase\Database;
 
 class OrderObserver
