@@ -2,6 +2,7 @@
 
 namespace Modules\Order\Http\Controllers;
 
+use App\Exports\OrdersExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
@@ -33,34 +34,18 @@ class OrderController extends CommonController
     {
         $input = $request->all();
         try {
-            $data = OrderServiceFactory::mOrderService()->export($input);
-            $orders = [];
-            foreach ($data as $order) {
-                foreach ($order['cart'] as $key => $cart) {
-                    if (!$key) {
-                        $orders[] = array(
-                            'id' => $order['id'],
-                            'link' => $cart['pro_link']
-                        );
-                    } else {
-                        $orders[] = array(
-                            'id' => '',
-                            'link' => $cart['pro_link']
-                        );
-                    }
-                }
-            }
+            $fileName = time() . '.orders.xlsx';
+            $file = \Maatwebsite\Excel\Facades\Excel::store(new OrdersExport($input), $fileName);
+            return $this->sendResponse($fileName, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
 
-            $fileName = time() . '.orders';
-            $res = Excel::create($fileName, function ($excel) use ($orders) {
-                $excel->sheet('Orders-link', function ($sheet) use ($orders) {
-                    $sheet->fromArray($orders);
-                    $sheet->setCellValue('A1', 'Đơn hàng');
-                    $sheet->setCellValue('B1', 'Link sp');
-                });
-            })->store('xlsx', public_path('exports'), true);
-
-            return $this->sendResponse($res, 'Successfully.');
+    public function download(Request $request, $filename)
+    {
+        try {
+            return response()->download(storage_path("app/{$filename}"));
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }
