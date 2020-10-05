@@ -15,6 +15,7 @@
         "maatwebsite/excel": "^3.1",
         "nwidart/laravel-modules": "^5.0",
         "paragonie/random_compat": "2.*",
+        "peterpetrus/passport-token": "^0.0.9",
         "spatie/laravel-permission": "^2.36"
     },
     "require-dev": {

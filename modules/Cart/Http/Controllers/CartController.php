@@ -9,6 +9,7 @@ use Modules\Cart\Services\CartServiceFactory;
 use Modules\Shop\Services\ShopServiceFactory;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
+use PeterPetrus\Auth\PassportToken;
 
 class CartController extends CommonController
 {
@@ -145,21 +146,37 @@ class CartController extends CommonController
     {
         $input = $request->all();
         try {
-            $inputData = self::json_decode_nice($input['cart']);
+            if (empty($input['tk'])) {
+                return $this->sendError('Error', ['Auth'], 401);
+            }
+            $decoded_token = PassportToken::dirtyDecode(
+                $input['tk']
+            );
+            if ($decoded_token['valid']) {
+                // Check if token exists in DB (table 'oauth_access_tokens'), require \Illuminate\Support\Facades\DB class
+                $token_exists = PassportToken::existsValidToken(
+                    $decoded_token['token_id'],
+                    $decoded_token['user_id']
+                );
 
-            //Check rate
-            $user = $request->user();
-            $rate = 0;
-            if (!empty($user)) {
-                $userData = CommonServiceFactory::mUserService()->findById($user->id);
-                if (!empty($userData) && !empty($userData['user']) && !empty($userData['user']['rate'])) {
-                    $rate = (int)$userData['user']['rate'];
-                } else {
-                    $setting = CommonServiceFactory::mSettingService()->findByKey('rate');
-                    $rate = (int)$setting['setting']['value'];
+                if (!$token_exists) {
+                    return $this->sendError('Error', ['Auth'], 401);
                 }
             } else {
                 return $this->sendError('Error', ['Auth'], 401);
+            }
+
+            $inputData = self::json_decode_nice($input['cart']);
+
+            // Check rate
+            // $user = $request->user();
+            $rate = 0;
+            $userData = CommonServiceFactory::mUserService()->findById($decoded_token['user_id']);
+            if (!empty($userData) && !empty($userData['user']) && !empty($userData['user']['rate'])) {
+                $rate = (int)$userData['user']['rate'];
+            } else {
+                $setting = CommonServiceFactory::mSettingService()->findByKey('rate');
+                $rate = (int)$setting['setting']['value'];
             }
 
             foreach ((array)$inputData as $item) {
@@ -203,7 +220,7 @@ class CartController extends CommonController
                 }
 
                 $inputCart['shop_id'] = $shop['id'];
-                $inputCart['user_id'] = $user->id;
+                $inputCart['user_id'] = $decoded_token['user_id'];
                 $inputCart['price'] = self::convertPrice($inputCart['price']);
                 $inputCart['price_arr'] = json_encode($inputCart['price_arr']);
                 $create = CartServiceFactory::mCartService()->create($inputCart);
