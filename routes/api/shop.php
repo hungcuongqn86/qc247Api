@@ -6,6 +6,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     });
 });
 Route::group(['prefix' => 'shop', 'namespace' => 'Modules\Shop\Http\Controllers'], function () {
-    Route::post('/create', 'ShopController@create');
+    Route::post('/create', 'ShopController@create')->middleware('cors');
 });
 
