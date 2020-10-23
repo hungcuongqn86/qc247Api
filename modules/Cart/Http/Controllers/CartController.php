@@ -222,7 +222,7 @@ class CartController extends CommonController
                 $inputCart['shop_id'] = $shop['id'];
                 $inputCart['user_id'] = $decoded_token['user_id'];
                 $inputCart['price'] = self::convertPrice($inputCart['price']);
-                $inputCart['price_arr'] = json_encode($inputCart['price_arr']);
+                $inputCart['price_arr'] = !empty($inputCart['price_arr']) ? json_encode($inputCart['price_arr']) : '';
                 $create = CartServiceFactory::mCartService()->create($inputCart);
             }
 
