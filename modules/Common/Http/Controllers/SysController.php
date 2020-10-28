@@ -55,4 +55,17 @@ class SysController extends CommonController
             return $this->sendError('Error', $e->getMessage());
         }
     }
+
+    public function download(Request $request, $filename)
+    {
+        try {
+            $path = storage_path("app/exports/{$filename}");
+            return response()->make(file_get_contents($path), 200, [
+                'Content-Type' => mime_content_type($path),
+                'Content-Disposition' => 'inline; filename="' . $filename . '"'
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
 }

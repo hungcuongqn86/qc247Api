@@ -3,10 +3,12 @@
 namespace Modules\Order\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
 use Modules\Common\Services\CommonServiceFactory;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
 class WarehouseController extends CommonController
 {
@@ -234,6 +236,69 @@ class WarehouseController extends CommonController
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function billExport(Request $request)
+    {
+        $input = $request->all();
+        $currentUser = Auth::user();
+        if (!$currentUser->hasRole('admin')) {
+            return $this->sendError('Kết xuất không thành công!', ['Auth'], 401);
+        }
+        $arrRules = [
+            'id' => 'required',
+        ];
+        $arrMessages = [
+            'id.required' => 'Không xác định được phiếu xuất!',
+        ];
+
+        $validator = Validator::make($input, $arrRules, $arrMessages);
+        if ($validator->fails()) {
+            return $this->sendError('Kết xuất không thành công!', $validator->errors()->all());
+        }
+
+        try {
+            //Bill
+            $bill = OrderServiceFactory::mBillService()->findById($input['id']);
+            $reportname = time() . '_pet_invoice.xlsx';
+            $template = public_path('template/bill.xlsx');
+            self::_export($reportname, $template, $bill);
+            $url = url('/download/' . $reportname);
+            return $this->sendResponse($url, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    private function _export($reportname, $template, $data)
+    {
+        try {
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($template);
+            $worksheet = $spreadsheet->getActiveSheet();
+
+            // Page setup
+            $pageSetup = $worksheet->getPageSetup();
+            // $pageSetup->addPrintAreaByColumnAndRow(1, 0, 4, 30);
+            $pageSetup->setOrientation(PageSetup::ORIENTATION_PORTRAIT);
+            $pageSetup->setPaperSize(PageSetup::PAPERSIZE_A4);
+            $pageSetup->setFitToPage(1);
+            // $pageSetup->setScale(400);
+            $pageSetup->setFitToWidth(1);
+            $pageSetup->setFitToHeight(1);
+            $worksheet->setShowGridlines(false);
+
+            // Page margins
+            $pageMargins = $worksheet->getPageMargins();
+            $pageMargins->setTop(0.5);
+            $pageMargins->setRight(0.25);
+            $pageMargins->setLeft(0.25);
+            $pageMargins->setBottom(0.15);
+
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save(storage_path('app/exports/' . $reportname));
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 }
