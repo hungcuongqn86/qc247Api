@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
 use Modules\Common\Services\CommonServiceFactory;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
 class WarehouseController extends CommonController
@@ -261,9 +262,26 @@ class WarehouseController extends CommonController
         try {
             //Bill
             $bill = OrderServiceFactory::mBillService()->findById($input['id']);
+            $report = ["tong_can_nang" => 0, "tong_thanh_ly" => 0, "tong_tien_can" => 0];
+            $cartData = [];
+            foreach ($bill['bill']['package'] as $package) {
+                $report['tong_can_nang'] += $package['weight_qd'];
+                $report['tong_tien_can'] += $package['tien_can'];
+                $report['tong_thanh_ly'] += $package['tien_thanh_ly'];
+
+                $arrCart = $package['order']['cart'];
+                foreach ($arrCart as $cart) {
+                    if (($index = array_search($cart['id'], array_column($cartData, 'id'))) !== false) {
+
+                    } else {
+                        $cartData[] = $cart;
+                    }
+                }
+            }
+
             $reportname = time() . '_pet_invoice.xlsx';
             $template = public_path('template/bill.xlsx');
-            self::_export($reportname, $template, $bill);
+            self::_export($reportname, $template, $bill['bill'], $report, $cartData);
             $url = url('/download/' . $reportname);
             return $this->sendResponse($url, 'Successfully.');
         } catch (\Exception $e) {
@@ -271,7 +289,7 @@ class WarehouseController extends CommonController
         }
     }
 
-    private function _export($reportname, $template, $data)
+    private function _export($reportname, $template, $bill, $report, $cartData)
     {
         try {
             $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($template);
@@ -294,6 +312,80 @@ class WarehouseController extends CommonController
             $pageMargins->setRight(0.25);
             $pageMargins->setLeft(0.25);
             $pageMargins->setBottom(0.15);
+            // bill id
+            $billcode = '(Mã phiếu ' . $bill['id'] . ') Hà Nội';
+            $worksheet->getCell('B5')->setValue($billcode);
+
+            // bill.user
+            $worksheet->getCell('D8')->setValue($bill['user']['name']);
+            $worksheet->getCell('D9')->setValue($bill['user']['email']);
+            $worksheet->getCell('D10')->setValue($bill['user']['phone_number']);
+
+            // report
+            $worksheet->getCell('K8')->setValue($report['tong_tien_can'] + $report['tong_thanh_ly']);
+            $worksheet->getCell('K9')->setValue($bill['user']['debt']);
+            $worksheet->getCell('K10')->setValue($bill['user']['debt'] - $report['tong_tien_can'] - $report['tong_thanh_ly']);
+
+            $worksheet->getCell('B14')->setValue($report['tong_can_nang']);
+            $worksheet->getCell('D14')->setValue($report['tong_tien_can']);
+            $worksheet->getCell('K14')->setValue($report['tong_thanh_ly']);
+
+            // package
+            $worksheet->getCell('E19')->setValue($report['tong_thanh_ly']);
+            $worksheet->getCell('J19')->setValue($report['tong_tien_can']);
+
+            //Footer
+            $worksheet->getCell('B29')->setValue($bill['user']['name']);
+            $worksheet->getCell('I29')->setValue($bill['employee']['name']);
+            $dateStr = 'Hà Nội, ngày ' . date('d') . ' tháng ' . date('m') . ' năm ' . date('Y') . '.';;
+            $worksheet->getCell('I25')->setValue($dateStr);
+
+            $baseRow = 18;
+            $count = sizeof($bill['package']);
+            if ($count > 1) {
+                $worksheet->insertNewRowBefore($baseRow, $count - 1);
+            }
+            for ($i = 0; $i < $count; $i++) {
+                $index = $baseRow + $i;
+                $item = $bill['package'][$i];
+
+                $worksheet->getCell('B' . $index)->setValue($i + 1);
+                $worksheet->getCell('C' . $index)->setValueExplicit($item['package_code'], DataType::TYPE_STRING);
+                $worksheet->getCell('D' . $index)->setValue($item['order_id']);
+                $worksheet->getCell('E' . $index)->setValue($item['tien_thanh_ly']);
+                $worksheet->getCell('G' . $index)->setValue($item['weight']);
+                $worksheet->getCell('H' . $index)->setValue($item['weight_qd']);
+                $worksheet->getCell('I' . $index)->setValue($item['gia_can']);
+                $worksheet->getCell('J' . $index)->setValue($item['tien_can']);
+                $worksheet->getCell('K' . $index)->setValue(0);
+                $worksheet->getCell('L' . $index)->setValue(0);
+                $worksheet->getRowDimension($index)->setRowHeight(-1);
+            }
+            //
+            $baseRow = 23 + $count - 1;
+            $count = sizeof($cartData);
+            if ($count > 1) {
+                $worksheet->insertNewRowBefore($baseRow, $count - 1);
+                for ($i = 0; $i < $count; $i++) {
+                    $index = $baseRow + $i;
+                    $worksheet->mergeCells('B' . $index . ':C' . $index);
+                }
+            }
+            for ($i = 0; $i < $count; $i++) {
+                $index = $baseRow + $i;
+                $item = $cartData[$i];
+
+                $worksheet->getCell('B' . $index)->setValue($item['order_id']);
+                $worksheet->getCell('D' . $index)->setValue($item['id']);
+                $worksheet->getCell('E' . $index)->setValue($item['colortxt']);
+                $worksheet->getCell('F' . $index)->setValue($item['sizetxt']);
+                $worksheet->getCell('G' . $index)->setValue($item['note']);
+                $worksheet->getCell('H' . $index)->setValue($item['price']);
+                $worksheet->getCell('I' . $index)->setValue($item['amount']);
+                $worksheet->getCell('J' . $index)->setValue(0);
+                $worksheet->getCell('K' . $index)->setValue($item['amount']);
+                $worksheet->getRowDimension($index)->setRowHeight(-1);
+            }
 
             $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
             $writer->save(storage_path('app/exports/' . $reportname));
