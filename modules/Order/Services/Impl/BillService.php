@@ -59,7 +59,7 @@ class BillService extends CommonService implements IBillService
                 }));
                 $query->where('is_deleted', '=', 0)->orderBy('id');
             }));
-        }))->where('id', '=', $id)->first();
+        }))->where('id', '=', $id)->where('is_deleted', '=', 0)->first();
         if (!empty($rResult)) {
             return array('bill' => $rResult->toArray());
         } else {
