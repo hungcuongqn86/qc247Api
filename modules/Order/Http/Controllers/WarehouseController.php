@@ -117,20 +117,22 @@ class WarehouseController extends CommonController
         }
         try {
             // Package
-            $packages = $bill['bill']['package'];
-            foreach ($packages as $package) {
-                $packageInput = array(
-                    'id' => $package['id'],
-                    'bill_id' => null
-                );
-                OrderServiceFactory::mPackageService()->update($packageInput);
-            }
             $billInput = array(
                 'id' => $input['id'],
                 'is_deleted' => 1
             );
-            OrderServiceFactory::mBillService()->update($billInput);
-            return $this->sendResponse(true, 'Successfully.');
+            $update = OrderServiceFactory::mBillService()->update($billInput);
+            if ($update) {
+                $packages = $bill['bill']['package'];
+                foreach ($packages as $package) {
+                    $packageInput = array(
+                        'id' => $package['id'],
+                        'bill_id' => null
+                    );
+                    OrderServiceFactory::mPackageService()->update($packageInput);
+                }
+            }
+            return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }
@@ -170,6 +172,9 @@ class WarehouseController extends CommonController
             $billinput['tien_can'] = 0;
             $billinput['tien_thanh_ly'] = 0;
             $bill = OrderServiceFactory::mBillService()->findById($input['id']);
+            if ($bill['bill']['status'] > 1) {
+                return $this->sendError('Phiếu đã xuất!', ['Phiếu đã xuất']);
+            }
             $packages = $bill['bill']['package'];
             foreach ($packages as $package) {
                 $billinput['tong_can'] = $billinput['tong_can'] + $package['weight_qd'];
