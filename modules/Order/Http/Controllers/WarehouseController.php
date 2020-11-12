@@ -342,7 +342,9 @@ class WarehouseController extends CommonController
             //Footer
             $worksheet->getCell('B29')->setValue($bill['user']['name']);
             $worksheet->getCell('I29')->setValue($bill['employee']['name']);
-            $dateStr = 'Hà Nội, ngày ' . date('d') . ' tháng ' . date('m') . ' năm ' . date('Y') . '.';;
+
+            $createDate = \Carbon\Carbon::parse($bill['created_at']);
+            $dateStr = 'Hà Nội, ngày ' . $createDate->day . ' tháng ' . $createDate->month . ' năm ' . $createDate->year . '.';;
             $worksheet->getCell('I25')->setValue($dateStr);
 
             $baseRow = 18;
