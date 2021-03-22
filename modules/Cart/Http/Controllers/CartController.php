@@ -59,11 +59,13 @@ class CartController extends CommonController
 
             $validator = Validator::make($input, $arrRules, $arrMessages);
             if ($validator->fails()) {
+                DB::rollBack();
                 return $this->sendError('Error', $validator->errors()->all());
             }
             $user = $request->user();
             $cartI = CartServiceFactory::mCartService()->findById($input['id']);
             if (empty($cartI)) {
+                DB::rollBack();
                 return $this->sendError('Error', ['Không tồn tại sản phẩm!']);
             }
 
@@ -73,6 +75,7 @@ class CartController extends CommonController
                 if ($order) {
                     $order = $order['order'];
                     if ($order['status'] == 5) {
+                        DB::rollBack();
                         return $this->sendError('Error', ['Đơn đã thanh lý!']);
                     }
                 }

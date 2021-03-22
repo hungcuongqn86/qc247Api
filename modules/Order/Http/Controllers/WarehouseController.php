@@ -4,6 +4,7 @@ namespace Modules\Order\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
@@ -163,6 +164,7 @@ class WarehouseController extends CommonController
             return $this->sendError('Xuất kho không thành công!', $validator->errors()->all());
         }
 
+        DB::beginTransaction();
         try {
             //Bill
             $billinput = array();
@@ -173,6 +175,7 @@ class WarehouseController extends CommonController
             $billinput['tien_thanh_ly'] = 0;
             $bill = OrderServiceFactory::mBillService()->findById($input['id']);
             if ($bill['bill']['status'] > 1) {
+                DB::rollBack();
                 return $this->sendError('Phiếu đã xuất!', ['Phiếu đã xuất']);
             }
             $packages = $bill['bill']['package'];
@@ -183,6 +186,7 @@ class WarehouseController extends CommonController
             }
 
             if ($billinput['tien_thanh_ly'] > $bill['bill']['user']['debt']) {
+                DB::rollBack();
                 return $this->sendError('Xuất kho không thành công!', ['Dư nợ không đủ để thực hiện thanh lý!']);
             }
 
@@ -239,8 +243,10 @@ class WarehouseController extends CommonController
                 ];
                 CommonServiceFactory::mTransactionService()->create($transaction);
             }
+            DB::commit();
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->sendError('Error', $e->getMessage());
         }
     }
