@@ -10,6 +10,7 @@ use Modules\Shop\Services\ShopServiceFactory;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
 use PeterPetrus\Auth\PassportToken;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends CommonController
 {
@@ -29,6 +30,7 @@ class CartController extends CommonController
     public function update(Request $request)
     {
         $input = $request->all();
+        DB::beginTransaction();
         try {
             $arrRules = [
                 'id' => 'required',
@@ -128,8 +130,10 @@ class CartController extends CommonController
                 OrderServiceFactory::mHistoryService()->create($history);
             }
 
+            DB::commit();
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->sendError('Error', $e->getMessage());
         }
     }
