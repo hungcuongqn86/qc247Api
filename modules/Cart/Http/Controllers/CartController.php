@@ -125,7 +125,6 @@ class CartController extends CommonController
                         $package = $order["package"][0];
                         if(!empty($package) && !empty($package['tra_shop'])){
                             $package['tra_shop'] = $tra_shop;
-                            dd($package);
                             OrderServiceFactory::mPackageService()->update($package);
                         }
                     }
