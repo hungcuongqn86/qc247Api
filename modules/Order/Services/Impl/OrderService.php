@@ -56,10 +56,10 @@ class OrderService extends CommonService implements IOrderService
             } else {
                 $query->whereHas('Package', function ($q) use ($package_code, $contract_code, $iPkStatus) {
                     if(!empty($package_code)){
-                        $q->where('package_code', '=', $package_code);
+                        $q->where('package_code', 'LIKE', '%' . $package_code. '%');
                     }
                     if(!empty($contract_code)){
-                        $q->where('contract_code', '=', $contract_code);
+                        $q->where('contract_code', 'LIKE', '%' .$contract_code. '%');
                     }
                     if ($iPkStatus > 0) {
                         $q->where('status', '=', $iPkStatus);
