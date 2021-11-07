@@ -83,7 +83,7 @@ class CartController extends CommonController
 
             $input['price'] = self::convertPrice($input['price']);
             $update = CartServiceFactory::mCartService()->update($input);
-            if (!empty($input['order_id']) && $update) {
+            if (!empty($input['order_id']) && !empty($update)) {
                 $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
                 if ($order) {
                     $order = $order['order'];
@@ -120,6 +120,7 @@ class CartController extends CommonController
                     $orderInput['phi_tam_tinh'] = $phi_tt;
                     $orderInput['tong'] = $tien_hang + $phi_tt;
                     $orderInput['count_product'] = $count_product;
+                    // dd($orderInput);
                     OrderServiceFactory::mOrderService()->update($orderInput);
                     if(!empty($order["package"]) && (sizeof($order["package"]) > 0)){
                         $package = $order["package"][0];
