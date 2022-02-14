@@ -138,7 +138,8 @@ class CommentController extends CommonController
             $data = $this->database->getReference($refer)->getValue();
             $update = [];
             foreach ($data as $key => $item){
-                $checkData = CommentUsers::where('is_deleted', '=', 0)->where('user_id', '=', $userId)->where('comment_id', '=', $key)->get();
+                $checkData = CommentUsers::where('is_deleted', '=', 0)->where('user_id', '=', $userId)->where('comment_id', '=', $key)->get()->toArray();
+                // dd($checkData);
                 if(!empty($checkData)){
                     $refer = config('app.name').'/comment/'.$userId.'/'.$key;
                     $update[$refer] = [];
