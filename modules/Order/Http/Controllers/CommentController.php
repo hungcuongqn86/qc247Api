@@ -4,6 +4,7 @@ namespace Modules\Order\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Modules\Common\Entities\CommentUsers;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Common\Services\CommonServiceFactory;
 use Modules\Common\Http\Controllers\CommonController;
@@ -85,6 +86,7 @@ class CommentController extends CommonController
         try {
             // comment
             $comments = OrderServiceFactory::mCommentService()->getWaitByOrderId($input['order_id'], $user['id']);
+            // dd($comments);
 			$update = [];
             foreach ($comments as $comment) {
                 if (($user['type'] == 1) && $comment['is_admin'] == 1) {
@@ -122,6 +124,30 @@ class CommentController extends CommonController
 			}
 
             return $this->sendResponse($comments, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function fixdata(Request $request)
+    {
+        $input = $request->all();
+        try {
+            $userId = $input['user_id'];
+            $refer = config('app.name').'/comment/'.$userId;
+            $data = $this->database->getReference($refer)->getValue();
+            $update = [];
+            foreach ($data as $key => $item){
+                $checkData = CommentUsers::where('is_deleted', '=', 0)->where('user_id', '=', $userId)->where('comment_id', '=', $key)->get();
+                if(!empty($checkData)){
+                    $refer = config('app.name').'/comment/'.$userId.'/'.$key;
+                    $update[$refer] = [];
+                }
+            }
+            if(!empty($update)){
+                $this->database->getReference()->update($update);
+            }
+            return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
         }

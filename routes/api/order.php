@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth:api'], function () {
                 Route::get('/getall', 'CommentController@getall');
                 Route::post('/create', 'CommentController@create');
                 Route::post('/isread', 'CommentController@isread');
+                Route::post('/fixdata', 'CommentController@fixdata');
             });
             Route::group(['prefix' => 'complain'], function () {
                 Route::get('/search', 'ComplainController@getByOrder');
