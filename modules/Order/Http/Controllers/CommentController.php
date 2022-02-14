@@ -123,6 +123,8 @@ class CommentController extends CommonController
 				$this->database->getReference()->update($update);
 			}
 
+            self::_fixdata($user['id']);
+
             return $this->sendResponse($comments, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
@@ -151,6 +153,29 @@ class CommentController extends CommonController
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    private function _fixdata($userId)
+    {
+        try {
+            $refer = config('app.name').'/comment/'.$userId;
+            $data = $this->database->getReference($refer)->getValue();
+            $update = [];
+            foreach ($data as $key => $item){
+                $checkData = CommentUsers::where('is_deleted', '=', 0)->where('user_id', '=', $userId)->where('comment_id', '=', $key)->get()->toArray();
+                // dd($checkData);
+                if(!empty($checkData)){
+                    $refer = config('app.name').'/comment/'.$userId.'/'.$key;
+                    $update[$refer] = [];
+                }
+            }
+            if(!empty($update)){
+                $this->database->getReference()->update($update);
+            }
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 
