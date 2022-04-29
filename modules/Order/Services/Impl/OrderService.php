@@ -27,14 +27,19 @@ class OrderService extends CommonService implements IOrderService
         }))->where('is_deleted', '=', 0);
         $sKeySearch = isset($filter['key']) ? $filter['key'] : '';
         if (!empty($sKeySearch)) {
-            $query->whereHas('User', function ($q) use ($sKeySearch) {
-                $q->where('name', 'LIKE', '%' . $sKeySearch . '%');
-                $q->orWhere('email', 'LIKE', '%' . $sKeySearch . '%');
-                $q->orWhere('phone_number', 'LIKE', '%' . $sKeySearch . '%');
-            });
-            $query->orWhereHas('Cart', function ($q) use ($sKeySearch) {
-                $q->whereHas('Shop', function ($q) use ($sKeySearch) {
+            $query->where( function ($query) use ($sKeySearch) {
+                $query->whereHas('User', function ($q) use ($sKeySearch) {
                     $q->where('name', 'LIKE', '%' . $sKeySearch . '%');
+                    $q->orWhere('email', 'LIKE', '%' . $sKeySearch . '%');
+                    $q->orWhere('phone_number', 'LIKE', '%' . $sKeySearch . '%');
+                });
+                $query->orWhereHas('Cart', function ($q) use ($sKeySearch) {
+                    $q->whereHas('Shop', function ($q) use ($sKeySearch) {
+                        $q->where('name', 'LIKE', '%' . $sKeySearch . '%');
+                    });
+                });
+                $query->orWhereHas('Package', function ($q) use ($sKeySearch) {
+                    $q->where('note_tl', 'LIKE', '%' . $sKeySearch . '%');
                 });
             });
         }
