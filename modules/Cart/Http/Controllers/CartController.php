@@ -97,7 +97,7 @@ class CartController extends CommonController
                     $count_product = 0;
                     foreach ($arrCarts as $cartItem) {
                         $price = self::convertPrice($cartItem['price']);
-                        $rate = $cartItem['rate'];
+                        $rate = $order['rate'];
                         $amount = $cartItem['amount'];
                         $tra_shop = $tra_shop + ($price * $amount);
                         $tien_hang = $tien_hang + round($price * $rate * $amount);
