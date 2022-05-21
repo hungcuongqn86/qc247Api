@@ -3,21 +3,73 @@
 namespace Modules\Order\Http\Controllers;
 
 use App\Exports\OrdersExport;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Modules\Order\Services\OrderServiceFactory;
-use Modules\Cart\Services\CartServiceFactory;
-use Modules\Common\Services\CommonServiceFactory;
-use Modules\Common\Http\Controllers\CommonController;
-use Illuminate\Support\Facades\Auth;
 use Excel;
 use File;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Modules\Cart\Services\CartServiceFactory;
+use Modules\Common\Entities\Order;
+use Modules\Common\Http\Controllers\CommonController;
+use Modules\Common\Services\CommonServiceFactory;
+use Modules\Order\Services\OrderServiceFactory;
 
 class OrderController extends CommonController
 {
     public function index()
     {
         return $this->sendResponse([], 'Successfully.');
+    }
+
+    private function convertPrice($priceStr)
+    {
+        $price = str_replace(' ', '', $priceStr);
+        $price = explode('-', $price)[0];
+        $price = str_replace(',', '.', $price);
+        return $price;
+    }
+
+    public function fixbug(Request $request)
+    {
+        $input = $request->all();
+        try {
+            $query = Order::with(['Cart'])->where('is_deleted', '=', 0)
+                ->where('status', '<', 5)->get()->toArray();
+
+            $count = 0;
+            foreach ($query as $key => $order) {
+                $tien_hang = 0;
+                $arrCarts = $order['cart'];
+                if(!empty($arrCarts) && ($arrCarts[0]['rate'] != $order['rate'])){
+                    $count ++;
+                    foreach ($arrCarts as $cartItem) {
+                        $price = self::convertPrice($cartItem['price']);
+                        $rate = $order['rate'];
+                        $amount = $cartItem['amount'];
+                        $tien_hang = $tien_hang + round($price * $rate * $amount);
+                    }
+
+                    $phi_tt = round(($tien_hang * $order['phi_tam_tinh']) / $order['tien_hang']);
+
+                    echo $key . "--" . $order['id'] . " -- " . $tien_hang . " -- " . $phi_tt;
+                    echo '<br>';
+
+                    $orderInput = array();
+                    $orderInput['id'] = $order['id'];
+                    $orderInput['tien_hang'] = $tien_hang;
+                    $orderInput['phi_tam_tinh'] = $phi_tt;
+                    $orderInput['tong'] = $tien_hang + $phi_tt;
+                    // dd($orderInput);
+                    OrderServiceFactory::mOrderService()->update($orderInput);
+                }
+            }
+            echo '<br>';
+            echo $count;
+            exit;
+            return $this->sendResponse($query, 'Successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
     }
 
     public function search(Request $request)
