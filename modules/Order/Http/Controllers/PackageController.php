@@ -137,14 +137,17 @@ class PackageController extends CommonController
                 if (!empty($order['order']['user']['weight_price'])) {
                     $gia_can_nang = $order['order']['user']['weight_price'];
                 } else {
-                    if ($weight_qd < 10) {
-                        $gia_can_nang = 27000;
+                    if ($weight_qd <= 20) {
+                        $gia_can_nang = 42000;
                     }
-                    if (($weight_qd >= 10) && ($weight_qd <= 30)) {
-                        $gia_can_nang = 23000;
+                    if (($weight_qd > 20) && ($weight_qd <= 50)) {
+                        $gia_can_nang = 40000;
                     }
-                    if ($weight_qd > 30) {
-                        $gia_can_nang = 19000;
+                    if (($weight_qd > 50) && ($weight_qd <= 200)) {
+                        $gia_can_nang = 36000;
+                    }
+                    if ($weight_qd > 200) {
+                        $gia_can_nang = 35000;
                     }
                 }
                 $input['gia_can'] = $gia_can_nang;
