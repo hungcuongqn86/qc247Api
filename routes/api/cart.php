@@ -3,6 +3,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => 'cart', 'namespace' => 'Modules\Cart\Http\Controllers'], function () {
         Route::get('/search', 'CartController@search');
         Route::put('/update', 'CartController@update');
+        Route::post('/prices', 'CartController@prices');
         Route::put('/delete', 'CartController@delete');
     });
 });
