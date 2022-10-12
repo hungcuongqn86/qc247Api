@@ -358,6 +358,10 @@ class OrderController extends CommonController
         }
 
         $order = OrderServiceFactory::mOrderService()->findById($input['id']);
+        if (empty($order)) {
+            return $this->sendError('Error', ['Đơn không tồn tại!']);
+        }
+
         if (!empty($order) && ($order['order']['status'] > 2)) {
             return $this->sendError('Error', ['Đơn đã đặt cọc!']);
         }

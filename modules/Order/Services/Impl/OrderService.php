@@ -229,7 +229,7 @@ class OrderService extends CommonService implements IOrderService
     {
         $rResult = Order::with(['User', 'Cart', 'Shop', 'History'])->with(array('Package' => function ($query) {
             $query->where('is_deleted', '=', 0)->orderBy('id');
-        }))->where('id', '=', $id)->first();
+        }))->where('is_deleted', '=', 0)->where('id', '=', $id)->first();
         if (!empty($rResult)) {
             return array('order' => $rResult->toArray());
         } else {
