@@ -70,9 +70,10 @@ class CartController extends CommonController
                 return $this->sendError('Error', ['Không tồn tại sản phẩm!']);
             }
 
+            $orderId = $cartI['cart']['order_id'];
             $order = array();
-            if (!empty($input['order_id'])) {
-                $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
+            if (!empty($orderId)) {
+                $order = OrderServiceFactory::mOrderService()->findById($orderId);
                 if ($order) {
                     $order = $order['order'];
                     if ($order['status'] == 5) {
@@ -84,8 +85,8 @@ class CartController extends CommonController
 
             $input['price'] = self::convertPrice($input['price']);
             $update = CartServiceFactory::mCartService()->update($input);
-            if (!empty($input['order_id']) && !empty($update)) {
-                $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
+            if (!empty($orderId) && !empty($update)) {
+                $order = OrderServiceFactory::mOrderService()->findById($orderId);
                 if ($order) {
                     $order = $order['order'];
                 }
@@ -116,7 +117,7 @@ class CartController extends CommonController
                     }
 
                     $orderInput = array();
-                    $orderInput['id'] = $input['order_id'];
+                    $orderInput['id'] = $orderId;
                     $orderInput['tien_hang'] = $tien_hang;
                     $orderInput['phi_tam_tinh'] = $phi_tt;
                     $orderInput['tong'] = $tien_hang + $phi_tt;
@@ -137,7 +138,7 @@ class CartController extends CommonController
                 $content .= ' -> Sau khi sửa, SL: ' . $input['amount'] . ', đơn giá: ' . $input['price'] . '¥';
                 $history = [
                     'user_id' => $user['id'],
-                    'order_id' => $input['order_id'],
+                    'order_id' => $orderId,
                     'type' => 8,
                     'content' => $content
                 ];
