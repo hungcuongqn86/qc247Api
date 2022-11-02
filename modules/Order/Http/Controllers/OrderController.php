@@ -290,8 +290,8 @@ class OrderController extends CommonController
         }
 
         $order = OrderServiceFactory::mOrderService()->findById($input['id']);
-        if (!empty($order) && ($order['order']['status'] > 2)) {
-            return $this->sendError('Error', ['Không thể xóa đơn đã đặt cọc!']);
+        if (!empty($order) && ($order['order']['status'] > 1) && ($input['is_deleted'] == 1)) {
+            return $this->sendError('Error', ['Không thể xóa đơn!']);
         }
 
         try {
