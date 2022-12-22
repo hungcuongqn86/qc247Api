@@ -165,6 +165,22 @@ class PackageService extends CommonService implements IPackageService
         }
     }
 
+    public function import($arrInput)
+    {
+        DB::beginTransaction();
+        try {
+            Package::insert($arrInput);
+            DB::commit();
+            return 1;
+        } catch (QueryException $e) {
+            DB::rollBack();
+            throw $e;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
     public function update($arrInput)
     {
         $id = $arrInput['id'];

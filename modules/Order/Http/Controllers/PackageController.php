@@ -4,6 +4,7 @@ namespace Modules\Order\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Modules\Order\Services\OrderServiceFactory;
 use Modules\Cart\Services\CartServiceFactory;
 use Modules\Common\Services\CommonServiceFactory;
@@ -228,6 +229,59 @@ class PackageController extends CommonController
             }
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function import(Request $request)
+    {
+        $input = $request->all();
+        $arrRules = [
+            'order_id' => 'required',
+            'items' => 'required'
+        ];
+        $arrMessages = [
+            'order_id.required' => 'order_id.required',
+            'items.required' => 'Không có mã vận đơn hợp lệ'
+        ];
+
+        $validator = Validator::make($input, $arrRules, $arrMessages);
+        if ($validator->fails()) {
+            return $this->sendError('Error', $validator->errors()->all());
+        }
+
+        DB::beginTransaction();
+        try {
+            $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
+            if (empty($order)) {
+                return $this->sendError('Error', ['Đơn hàng không tồn tại!']);
+            }
+
+            $orderInput = array();
+            if ($order['order']['status'] < 4) {
+                $orderInput['id'] = $order['order']['id'];
+                $orderInput['status'] = 4;
+            }
+
+            $data = [];
+            foreach ($input['items'] as $pk) {
+                $data[] = [
+                    'order_id' => $input['order_id'],
+                    'package_code' => $pk,
+                    'status' => 3,
+                ];
+            }
+
+            $importRes = OrderServiceFactory::mPackageService()->import($data);
+            if(!empty($importRes)){
+                if (!empty($orderInput['id'])) {
+                    OrderServiceFactory::mOrderService()->update($orderInput);
+                }
+            }
+            DB::commit();
+            return $this->sendResponse(1, 'Successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
             return $this->sendError('Error', $e->getMessage());
         }
     }
