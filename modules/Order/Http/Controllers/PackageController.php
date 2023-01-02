@@ -250,6 +250,21 @@ class PackageController extends CommonController
             return $this->sendError('Error', $validator->errors()->all());
         }
 
+        $itemsArray = array_unique($input['items']);
+        $code = [];
+
+        $checkEx = OrderServiceFactory::mPackageService()->findByPkCodes($itemsArray);
+        if(!empty($checkEx)){
+            foreach ($checkEx as $pk) {
+                $code[] = $pk['package_code'];
+            }
+        }
+
+        if(sizeof($code) > 0){
+            $msg = 'Mã kiện ' . implode(', ', $code) . ' đã tồn tại!';
+            return $this->sendError('Error', [$msg]);
+        }
+
         DB::beginTransaction();
         try {
             $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
@@ -264,7 +279,7 @@ class PackageController extends CommonController
             }
 
             $data = [];
-            foreach ($input['items'] as $pk) {
+            foreach ($itemsArray as $pk) {
                 $data[] = [
                     'order_id' => $input['order_id'],
                     'package_code' => $pk,
