@@ -67,7 +67,7 @@ class ShopController extends CommonController
                 return $this->sendError('Error', $validator->errors()->all());
             }
 
-            $shop = ShopServiceFactory::mShopService()->findByUrl($input['url']);
+            $shop = ShopServiceFactory::mShopService()->findByUrl($input['url'], $input['name']);
             if ($shop) {
                 return $this->sendResponse($shop, 'Successfully.');
             } else {

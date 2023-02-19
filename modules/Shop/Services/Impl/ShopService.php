@@ -43,9 +43,9 @@ class ShopService extends CommonService implements IShopService
         return array('shop' => $rResult);
     }
 
-    public function findByUrl($url)
+    public function findByUrl($url, $name)
     {
-        $rResult = Shop::where('url', '=', $url)->first();
+        $rResult = Shop::where('url', '=', $url)->where('name', '=', $name)->first();
         if ($rResult) {
             return $rResult->toArray();
         }
