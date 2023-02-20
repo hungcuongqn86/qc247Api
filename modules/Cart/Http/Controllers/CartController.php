@@ -339,7 +339,7 @@ class CartController extends CommonController
                 }
 
                 // Shop
-                $shop = ShopServiceFactory::mShopService()->findByUrl($inputCart['shop_link']);
+                $shop = ShopServiceFactory::mShopService()->findByUrl($inputCart['shop_link'], $inputCart['shop_nick']);
                 if (!$shop) {
                     $inputShop = [
                         'name' => $inputCart['shop_nick'],
