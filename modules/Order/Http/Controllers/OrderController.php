@@ -7,6 +7,7 @@ use Excel;
 use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Modules\Cart\Services\CartServiceFactory;
 use Modules\Common\Entities\Order;
@@ -366,11 +367,13 @@ class OrderController extends CommonController
             return $this->sendError('Error', ['Đơn đã đặt cọc!']);
         }
 
+        DB::beginTransaction();
         try {
             $user = $request->user();
             // Transaction
             $debt = CommonServiceFactory::mTransactionService()->debt(['user_id' => $user['id']]);
             if ($debt < $input['dc_value']) {
+                DB::rollBack();
                 return $this->sendError('Dư nợ không đủ để thực hiện đặt cọc!');
             }
 
@@ -399,8 +402,10 @@ class OrderController extends CommonController
                 ];
                 CommonServiceFactory::mTransactionService()->create($transaction);
             }
+            DB::commit();
             return $this->sendResponse($update, 'Successfully.');
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->sendError('Error', $e->getMessage());
         }
     }
