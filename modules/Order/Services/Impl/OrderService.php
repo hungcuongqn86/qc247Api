@@ -57,6 +57,8 @@ class OrderService extends CommonService implements IOrderService
                     if ($iPkStatus > 0) {
                         $q->where('status', '=', $iPkStatus);
                     }
+
+                    $q->where('is_deleted', '=', 0);
                 });
             } else {
                 $query->whereHas('Package', function ($q) use ($package_code, $contract_code, $iPkStatus) {
@@ -69,12 +71,15 @@ class OrderService extends CommonService implements IOrderService
                     if ($iPkStatus > 0) {
                         $q->where('status', '=', $iPkStatus);
                     }
+
+                    $q->where('is_deleted', '=', 0);
                 });
             }
         } else {
             if ($iPkStatus > 0) {
                 $query->whereHas('Package', function ($q) use ($iPkStatus) {
                     $q->where('status', '=', $iPkStatus);
+                    $q->where('is_deleted', '=', 0);
                 });
             }
         }
