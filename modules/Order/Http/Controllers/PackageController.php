@@ -300,4 +300,36 @@ class PackageController extends CommonController
             return $this->sendError('Error', $e->getMessage());
         }
     }
+
+    public function remove(Request $request)
+    {
+        $input = $request->all();
+        $arrRules = [
+            'order_id' => 'required',
+            'items' => 'required'
+        ];
+        $arrMessages = [
+            'order_id.required' => 'order_id.required',
+            'items.required' => 'Không có kiện'
+        ];
+
+        $validator = Validator::make($input, $arrRules, $arrMessages);
+        if ($validator->fails()) {
+            return $this->sendError('Error', $validator->errors()->all());
+        }
+
+        DB::beginTransaction();
+        try {
+            $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
+            if (empty($order)) {
+                return $this->sendError('Error', ['Đơn hàng không tồn tại!']);
+            }
+            OrderServiceFactory::mPackageService()->remove($input['items']);
+            DB::commit();
+            return $this->sendResponse(1, 'Successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->sendError('Error', $e->getMessage());
+        }
+    }
 }

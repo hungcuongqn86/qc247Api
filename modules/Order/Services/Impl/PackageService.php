@@ -198,4 +198,20 @@ class PackageService extends CommonService implements IPackageService
             throw $e;
         }
     }
+
+    public function remove($items)
+    {
+        DB::beginTransaction();
+        try {
+            Package::whereIn('id', $items)->update(array('is_deleted' => 1));
+            DB::commit();
+            return 1;
+        } catch (QueryException $e) {
+            DB::rollBack();
+            throw $e;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

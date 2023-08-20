@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth:api'], function () {
                 Route::post('/create', 'PackageController@create');
                 Route::post('/import', 'PackageController@import');
                 Route::post('/update', 'PackageController@update');
+                Route::post('/remove', 'PackageController@remove');
             });
             Route::group(['prefix' => 'warehouse'], function () {
                 Route::get('/wait', 'WarehouseController@wait');
