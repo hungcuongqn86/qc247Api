@@ -250,6 +250,12 @@ class PackageController extends CommonController
             return $this->sendError('Error', $validator->errors()->all());
         }
 
+        $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
+        if (empty($order)) {
+            return $this->sendError('Error', ['Đơn hàng không tồn tại!']);
+        }
+
+        $arrPk = $order['order']['package'];
         $itemsArray = array_unique($input['items']);
         $data = [];
         $pkCodeArr = [];
@@ -258,6 +264,9 @@ class PackageController extends CommonController
             $code = trim($arrPkInfo[0]);
             $weight = 0;
             $weightCd = 0;
+            $gia_can_nang = 0;
+            $status = 3;
+
             if(sizeof($arrPkInfo) > 1){
                 $weightStr = str_replace(',','.', trim($arrPkInfo[1]));
                 $weight = (float)$weightStr;
@@ -265,6 +274,27 @@ class PackageController extends CommonController
                     $weightCd = 0.5;
                 } else {
                     $weightCd = $weight;
+                }
+
+                if ($weightCd > 0) {
+                    $status = 4;
+
+                    if (!empty($order['order']['user']['weight_price'])) {
+                        $gia_can_nang = $order['order']['user']['weight_price'];
+                    } else {
+                        if ($weightCd <= 20) {
+                            $gia_can_nang = 42000;
+                        }
+                        if (($weightCd > 20) && ($weightCd <= 50)) {
+                            $gia_can_nang = 40000;
+                        }
+                        if (($weightCd > 50) && ($weightCd <= 200)) {
+                            $gia_can_nang = 36000;
+                        }
+                        if ($weightCd > 200) {
+                            $gia_can_nang = 35000;
+                        }
+                    }
                 }
             }
 
@@ -275,7 +305,9 @@ class PackageController extends CommonController
                 'package_code' => $code,
                 'weight' => $weight,
                 'weight_qd' => $weightCd,
-                'status' => 3,
+                'gia_can' => $gia_can_nang,
+                'tien_can' => $gia_can_nang * $weightCd,
+                'status' => $status,
             ];
         }
 
@@ -294,24 +326,10 @@ class PackageController extends CommonController
 
         DB::beginTransaction();
         try {
-            $order = OrderServiceFactory::mOrderService()->findById($input['order_id']);
-            if (empty($order)) {
-                return $this->sendError('Error', ['Đơn hàng không tồn tại!']);
-            }
-
             $orderInput = array();
             if ($order['order']['status'] < 4) {
                 $orderInput['id'] = $order['order']['id'];
                 $orderInput['status'] = 4;
-            }
-
-            $data = [];
-            foreach ($itemsArray as $pk) {
-                $data[] = [
-                    'order_id' => $input['order_id'],
-                    'package_code' => $pk,
-                    'status' => 3,
-                ];
             }
 
             $importRes = OrderServiceFactory::mPackageService()->import($data);
