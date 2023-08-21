@@ -251,17 +251,44 @@ class PackageController extends CommonController
         }
 
         $itemsArray = array_unique($input['items']);
-        $code = [];
+        $data = [];
+        $pkCodeArr = [];
+        foreach ($itemsArray as $pk) {
+            $arrPkInfo = explode('|', $pk);
+            $code = trim($arrPkInfo[0]);
+            $weight = 0;
+            $weightCd = 0;
+            if(sizeof($arrPkInfo) > 1){
+                $weightStr = str_replace(',','.', trim($arrPkInfo[1]));
+                $weight = (float)$weightStr;
+                if ($weight < 0.5) {
+                    $weightCd = 0.5;
+                } else {
+                    $weightCd = $weight;
+                }
+            }
 
-        $checkEx = OrderServiceFactory::mPackageService()->findByPkCodes($itemsArray);
+            $pkCodeArr[] = $code;
+
+            $data[] = [
+                'order_id' => $input['order_id'],
+                'package_code' => $code,
+                'weight' => $weight,
+                'weight_qd' => $weightCd,
+                'status' => 3,
+            ];
+        }
+
+        $codeCheck = [];
+        $checkEx = OrderServiceFactory::mPackageService()->findByPkCodes($pkCodeArr);
         if(!empty($checkEx)){
             foreach ($checkEx as $pk) {
-                $code[] = $pk['package_code'];
+                $codeCheck[] = $pk['package_code'];
             }
         }
 
-        if(sizeof($code) > 0){
-            $msg = 'Mã kiện ' . implode(', ', $code) . ' đã tồn tại!';
+        if(sizeof($codeCheck) > 0){
+            $msg = 'Mã kiện ' . implode(', ', $codeCheck) . ' đã tồn tại!';
             return $this->sendError('Error', [$msg]);
         }
 
