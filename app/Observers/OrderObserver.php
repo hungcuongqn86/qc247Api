@@ -17,7 +17,7 @@ class OrderObserver
     public function saved(Order $order)
     {
 		//if($order->isDirty('status') || $order->isDirty('is_deleted')){
-			$userid = $order->user_id;
+			/*$userid = $order->user_id;
 			$rResult1 = Order::where('is_deleted', '=', 0)->where('user_id', '=', $userid)->groupBy('status')->selectRaw('status, count(*) as total, "od" as type')->get();
 			
 			$rResult2 = Package::where('is_deleted', '=', 0)->whereHas('Order', function ($q) use ($userid) {
@@ -38,7 +38,7 @@ class OrderObserver
 			}
 			
 			$data = array_merge($data1, $data2);
-			$this->database->getReference($refer)->set($data);
+			$this->database->getReference($refer)->set($data);*/
 		//}
     }
     /**

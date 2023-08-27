@@ -16,7 +16,7 @@ class PackageObserver
 
     public function saved(Package $package)
     {
-        $orderId = $package->order_id;
+        /*$orderId = $package->order_id;
         $order = Order::where('id', '=', $orderId)->first();
 
         $userid = $order->user_id;
@@ -40,6 +40,6 @@ class PackageObserver
         }
 
         $data = array_merge($data1, $data2);
-        $this->database->getReference($refer)->set($data);
+        $this->database->getReference($refer)->set($data);*/
     }
 }
