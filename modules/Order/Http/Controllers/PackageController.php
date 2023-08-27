@@ -277,7 +277,7 @@ class PackageController extends CommonController
                 }
 
                 if ($weightCd > 0) {
-                    $status = 4;
+                    $status = 6;
 
                     if (!empty($order['order']['user']['weight_price'])) {
                         $gia_can_nang = $order['order']['user']['weight_price'];
@@ -307,7 +307,8 @@ class PackageController extends CommonController
                 'weight_qd' => $weightCd,
                 'gia_can' => $gia_can_nang,
                 'tien_can' => $gia_can_nang * $weightCd,
-                'status' => $status,
+                'tien_thanh_ly' => 0,
+                'status' => $status
             ];
         }
 
