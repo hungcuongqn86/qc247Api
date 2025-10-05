@@ -101,8 +101,12 @@ class PackageController extends CommonController
                 return $this->sendError('Error', ['Đơn hàng không tồn tại!']);
             }
             $user = $request->user();
-
-            $history = array();
+			$history = [
+				'user_id' => $user['id'],
+				'order_id' => $order['order']['id'],
+				'type' => 11,
+				'content' => json_encode($input)
+			];
             $orderInput = array();
 
             if (!empty($input['contract_code'])) {
