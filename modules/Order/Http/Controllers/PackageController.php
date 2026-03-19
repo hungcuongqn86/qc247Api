@@ -79,11 +79,13 @@ class PackageController extends CommonController
         try {
             $arrRules = [
                 'order_id' => 'required',
-                'package_code' => 'nullable|unique:package,package_code,' . $input['id']
+                'package_code' => 'nullable|unique:package,package_code,' . $input['id'],
+                'contract_code' => 'nullable|unique:package,contract_code,' . $input['id']
             ];
             $arrMessages = [
                 'order_id.required' => 'order_id.required',
-                'package_code.unique' => 'Mã vận đơn ' . $input['package_code'] . ' đã tồn tại!'
+                'package_code.unique' => 'Mã vận đơn ' . $input['package_code'] . ' đã tồn tại!',
+                'contract_code.unique' => 'Mã hợp đồng ' . $input['contract_code'] . ' đã tồn tại!'
             ];
 
             $validator = Validator::make($input, $arrRules, $arrMessages);
