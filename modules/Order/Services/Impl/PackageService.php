@@ -141,6 +141,16 @@ class PackageService extends CommonService implements IPackageService
             return null;
         }
     }
+	
+	public function findByContractCodes($codes)
+    {
+        $rResult = Package::wherein('contract_code', $codes)->get();
+        if (!empty($rResult)) {
+            return $rResult->toArray();
+        } else {
+            return null;
+        }
+    }
 
     public function status()
     {

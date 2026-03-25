@@ -265,6 +265,7 @@ class PackageController extends CommonController
         $itemsArray = array_unique($input['items']);
         $data = [];
         $pkCodeArr = [];
+        $hdCodeArr = [];
         foreach ($itemsArray as $pk) {
             $arrPkInfo = explode('|', $pk);
             $code = trim($arrPkInfo[0]);
@@ -272,9 +273,14 @@ class PackageController extends CommonController
             $weightCd = 0;
             $gia_can_nang = 0;
             $status = 3;
+			
+			$hd_code = '';
+			if(sizeof($arrPkInfo) > 1){
+				$hd_code = trim($arrPkInfo[1]);
+			}
 
-            if(sizeof($arrPkInfo) > 1){
-                $weightStr = str_replace(',','.', trim($arrPkInfo[1]));
+            if(sizeof($arrPkInfo) > 2){
+                $weightStr = str_replace(',','.', trim($arrPkInfo[2]));
                 $weight = (float)$weightStr;
                 if ($weight < 0.5) {
                     $weightCd = 0.5;
@@ -305,10 +311,12 @@ class PackageController extends CommonController
             }
 
             $pkCodeArr[] = $code;
+            $hdCodeArr[] = $hd_code;
 
             $data[] = [
                 'order_id' => $input['order_id'],
                 'package_code' => $code,
+                'contract_code' => $hd_code,
                 'weight' => $weight,
                 'weight_qd' => $weightCd,
                 'gia_can' => $gia_can_nang,
@@ -328,6 +336,19 @@ class PackageController extends CommonController
 
         if(sizeof($codeCheck) > 0){
             $msg = 'Mã kiện ' . implode(', ', $codeCheck) . ' đã tồn tại!';
+            return $this->sendError('Error', [$msg]);
+        }
+		
+		$codeCheck = [];
+        $checkEx = OrderServiceFactory::mPackageService()->findByContractCodes($hdCodeArr);
+        if(!empty($checkEx)){
+            foreach ($checkEx as $pk) {
+                $codeCheck[] = $pk['contract_code'];
+            }
+        }
+
+        if(sizeof($codeCheck) > 0){
+            $msg = 'Mã hợp đồng ' . implode(', ', $codeCheck) . ' đã tồn tại!';
             return $this->sendError('Error', [$msg]);
         }
 
