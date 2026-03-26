@@ -79,13 +79,11 @@ class PackageController extends CommonController
         try {
             $arrRules = [
                 'order_id' => 'required',
-                'package_code' => 'nullable|unique:package,package_code,' . $input['id'],
-                'contract_code' => 'nullable|unique:package,contract_code,' . $input['id']
+                'package_code' => 'nullable|unique:package,package_code,' . $input['id']
             ];
             $arrMessages = [
                 'order_id.required' => 'order_id.required',
-                'package_code.unique' => 'Mã vận đơn ' . $input['package_code'] . ' đã tồn tại!',
-                'contract_code.unique' => 'Mã hợp đồng ' . $input['contract_code'] . ' đã tồn tại!'
+                'package_code.unique' => 'Mã vận đơn ' . $input['package_code'] . ' đã tồn tại!'
             ];
 
             $validator = Validator::make($input, $arrRules, $arrMessages);
@@ -265,7 +263,6 @@ class PackageController extends CommonController
         $itemsArray = array_unique($input['items']);
         $data = [];
         $pkCodeArr = [];
-        $hdCodeArr = [];
         foreach ($itemsArray as $pk) {
             $arrPkInfo = explode('|', $pk);
             $code = trim($arrPkInfo[0]);
@@ -311,7 +308,6 @@ class PackageController extends CommonController
             }
 
             $pkCodeArr[] = $code;
-            $hdCodeArr[] = $hd_code;
 
             $data[] = [
                 'order_id' => $input['order_id'],
@@ -339,19 +335,6 @@ class PackageController extends CommonController
             return $this->sendError('Error', [$msg]);
         }
 		
-		$codeCheck = [];
-        $checkEx = OrderServiceFactory::mPackageService()->findByContractCodes($hdCodeArr);
-        if(!empty($checkEx)){
-            foreach ($checkEx as $pk) {
-                $codeCheck[] = $pk['contract_code'];
-            }
-        }
-
-        if(sizeof($codeCheck) > 0){
-            $msg = 'Mã hợp đồng ' . implode(', ', $codeCheck) . ' đã tồn tại!';
-            return $this->sendError('Error', [$msg]);
-        }
-
         DB::beginTransaction();
         try {
             $orderInput = array();
